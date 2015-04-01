@@ -1,0 +1,248 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+
+    <meta http-equiv="content-type" content="text/html; charset=windows-1252">
+  </head>
+  <body>
+    Content-type: text/html
+    <title>Manpage of shc</title>
+    <h1>shc</h1>
+    Section: User Commands (1)<br>
+    Updated: Jun 18, 2003<br>
+    <a href="#index">Index</a>
+    <a href="http://localhost/cgi-bin/man/man2html">Return to Main
+      Contents</a>
+    <hr>
+    <p>
+      <a name="lbAB">&nbsp;</a>
+    </p>
+    <h2>NAME</h2>
+    shc - Generic shell script compiler
+    <a name="lbAC">&nbsp;</a>
+    <h2>SYNOPSIS</h2>
+    <b>shc</b>
+    [ -<b>e</b> date ]
+    [ -<b>m</b> addr ]
+    [ -<b>i</b> iopt ]
+    [ -<b>x</b> cmnd ]
+    <br>
+    [ -<b>l</b> lopt ]
+    [ -<b>ACDhTv</b> ]
+    -<b>f</b> script
+    <a name="lbAD">&nbsp;</a>
+    <h2>DESCRIPTION</h2>
+    <b>shc</b>
+    creates a stripped binary executable version of the script
+    specified with <i>-f</i> on the command line.
+    <p>
+      The binary version will get a <i>.x</i> extension appended
+      and will usually be a bit larger in size than the original ascii
+      code.
+      Generated C source code is saved in a file with the extension <i>.x.c</i>
+    </p>
+    <p>
+      If you supply an expiration date with the <i>-e</i> option the
+      compiled binary will refuse to run after the date specified.
+      The message <b>"Please contact your provider"</b> will be
+      displayed instead.
+      This message can be changed with the <i>-m</i> option.
+    </p>
+    <p>
+      You can compile any kind of shell script, but you need to supply
+      valid
+      <i>-i</i>, <i>-x</i> and <i>-l</i> options.
+    </p>
+    <p>
+      The compiled binary will still be dependent on the shell specified
+      in the first line of the shell code (i.e. #!/bin/sh), thus <b>shc</b>
+      does not create
+      completely independent binaries.
+    </p>
+    <p>
+      <b>shc</b> itself is not a compiler such as cc, it rather encodes
+      and
+      encrypts a shell script and generates C source code with the added
+      expiration
+      capability. It then uses the system compiler to compile a stripped
+      binary
+      which behaves exactly like the original script. Upon execution,
+      the compiled binary
+      will decrypt and execute the code with the shell <i>-c</i>
+      option.
+      Unfortunately, it will not give you any speed improvement as a
+      real C program would.
+    </p>
+    <p>
+      <b>shc</b>'s main purpose is to protect your shell scripts from
+      modification or
+      inspection. You can use it if you wish to distribute your scripts
+      but don't
+      want them to be easily readable by other people.
+      <a name="lbAE">&nbsp;</a>
+    </p>
+    <h2>OPTIONS</h2>
+    The command line options are:
+    <dl compact="compact">
+      <dt><b>-e date</b>
+      </dt>
+      <dd>
+        Expiration date in dd/mm/yyyy format [none]
+      </dd>
+      <dt><b>-m message</b>
+      </dt>
+      <dd>
+        message to display upon expiration ["Please contact your
+        provider"]
+      </dd>
+      <dt><b>-f script_name</b>
+      </dt>
+      <dd>
+        File name of the script to compile
+      </dd>
+      <dt><b>-i inline_option</b>
+      </dt>
+      <dd>
+        Inline option for the shell interpreter i.e: -e
+      </dd>
+      <dt><b>-x comand</b>
+      </dt>
+      <dd>
+        eXec command, as a printf format i.e: exec(\\'%s\\',@ARGV);
+      </dd>
+      <dt><b>-l last_option</b>
+      </dt>
+      <dd>
+        Last shell option i.e: --
+      </dd>
+      <dt><b>-o filename</b></dt>
+      <dd>output filename<br>
+      </dd>
+      <dt><b>-r</b>
+      </dt>
+      <dd>
+        Relax security. Make a redistributable binary which executes on
+        different systems running the same operating system.
+      </dd>
+      <dt><b>-v</b>
+      </dt>
+      <dd>
+        Verbose compilation
+      </dd>
+      <dt><b>-D</b>
+      </dt>
+      <dd>
+        Switch on debug exec calls
+      </dd>
+      <dt><b>-T</b>
+      </dt>
+      <dd>
+        Allow binary to be traceable (using strace, ptrace, truss, etc.)
+      </dd>
+      <dt><b>-C</b>
+      </dt>
+      <dd>
+        Display license and exit
+      </dd>
+      <dt><b>-A</b>
+      </dt>
+      <dd>
+        Display abstract and exit
+      </dd>
+      <dt><b>-h</b>
+      </dt>
+      <dd>
+        Display help and exit
+      </dd>
+    </dl>
+    <a name="lbAF">&nbsp;</a>
+    <h2>ENVIRONMENT VARIABLES</h2>
+    <dl compact="compact">
+      <dt><b>CC</b>
+      </dt>
+      <dd>
+        C compiler command [cc]
+      </dd>
+      <dt><b>CFLAGS</b>
+      </dt>
+      <dd>
+        C compiler flags [none]
+      </dd>
+    </dl>
+    <a name="lbAG">&nbsp;</a>
+    <h2>EXAMPLES</h2>
+    <font size="-1">Compile a script which can be run on other systems
+      with the trace</font>
+    option enabled:
+    <p>
+      <br>
+      &nbsp;&nbsp;example%&nbsp;<b>shc</b>&nbsp;-v&nbsp;-r&nbsp;-T -o
+      my_script -f&nbsp;myscript
+      <a name="lbAH">&nbsp;</a>
+    </p>
+    <h2>BUGS</h2>
+    The maximum size of the script that could be executed once compiled
+    is limited
+    by the operating system configuration parameter
+    <b>_SC_ARG_MAX</b>
+    (see
+    <b>sysconf</b>(<b>2</b>))
+    <a name="lbAI">&nbsp;</a>
+    <h2>AUTHORS</h2>
+    Francisco Rosales
+    &lt;<a href="mailto:frosal@fi.upm.es">frosal@fi.upm.es</a>&gt;&nbsp;
+    <a href="http://github.com/neurobin" name="lbAJ"><br>
+      Jahidul Hamid &lt;http://github.com/neurobin&gt;<br>
+    </a>
+    <h2>REPORT BUGS TO</h2>
+    the authors.
+    <p>
+    </p>
+    <hr>
+    <a name="index">&nbsp;</a>
+    <h2>Index</h2>
+    <dl>
+      <dt><a href="#lbAB">NAME</a></dt>
+      <dd>
+        <br>
+      </dd>
+      <dt><a href="#lbAC">SYNOPSIS</a></dt>
+      <dd>
+        <br>
+      </dd>
+      <dt><a href="#lbAD">DESCRIPTION</a></dt>
+      <dd>
+        <br>
+      </dd>
+      <dt><a href="#lbAE">OPTIONS</a></dt>
+      <dd>
+        <br>
+      </dd>
+      <dt><a href="#lbAF">ENVIRONMENT VARIABLES</a></dt>
+      <dd>
+        <br>
+      </dd>
+      <dt><a href="#lbAG">EXAMPLES</a></dt>
+      <dd>
+        <br>
+      </dd>
+      <dt><a href="#lbAH">BUGS</a></dt>
+      <dd>
+        <br>
+      </dd>
+      <dt><a href="#lbAI">AUTHOR</a></dt>
+      <dd>
+        <br>
+      </dd>
+      <dt><a href="#lbAJ">REPORT BUGS TO</a></dt>
+      <dd>
+        <br>
+      </dd>
+    </dl>
+    <hr>
+    This document was created by
+    <a href="http://localhost/cgi-bin/man/man2html">man2html</a>,
+    using the manual pages.<br>
+    Time: 15:46:31 GMT, July 08, 2004
+  </body>
+</html>

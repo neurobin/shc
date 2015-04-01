@@ -1,0 +1,119 @@
+.TH  shc 1  "Jun 18, 2003" "shc Version 3.8"
+.UC 4
+
+.SH "NAME"
+shc - Generic shell script compiler
+.SH "SYNOPSIS"
+.B shc
+[ \-\fBe\fP date ]
+[ \-\fBm\fP addr ]
+[ \-\fBi\fP iopt ]
+[ \-\fBx\fP cmnd ]
+.br
+[ \-\fBl\fP lopt ]
+[ \-\fBACDhTv\fP ]
+\-\fBf\fP script
+.SH "DESCRIPTION"
+.B shc
+creates a stripped binary executable version of the script
+specified with \fI\-f\fP on the command line.
+
+The binary version will get a \fI.x\fP extension appended
+and will usually be a bit larger in size than the original ascii code.
+Generated C source code is saved in a file with the extension \fI.x.c\fP
+
+If you supply an expiration date with the \fI\-e\fP option the
+compiled binary will refuse to run after the date specified.
+The message \fB"Please contact your provider"\fP will be displayed instead.
+This message can be changed with the \fI\-m\fP option.
+
+You can compile any kind of shell script, but you need to supply valid
+\fI\-i\fP, \fI\-x\fP and \fI\-l\fP options.
+
+The compiled binary will still be dependent on the shell specified
+in the first line of the shell code (i.e. #!/bin/sh), thus \fBshc\fP does not create
+completely independent binaries.
+
+\fBshc\fP itself is not a compiler such as cc, it rather encodes and
+encrypts a shell script and generates C source code with the added expiration
+capability. It then uses the system compiler to compile a stripped binary
+which behaves exactly like the original script. Upon execution, the compiled binary
+will decrypt and execute the code with the shell \fI-c\fP option.
+Unfortunatelly, it will not give you any speed improvement as a real C program would.
+
+\fBshc\fP's main purpose is to protect your shell scripts from modification or
+inspection. You can use it if you wish to distribute your scripts but don't
+want them to be easily readable by other people.
+.SH "OPTIONS"
+The command line options are:
+.TP
+.B -e date
+Expiration date in dd/mm/yyyy format [none]
+.TP
+.B -m message
+message to display upon expiration ["Please contact your provider"]
+.TP
+.B -f script_name
+File name of the script to compile
+.TP
+.B -i inline_option
+Inline option for the shell interpreter i.e: -e
+.TP
+.B -x comand
+eXec command, as a printf format i.e: exec(\\\\'%s\\\\',@ARGV);
+.TP
+.B -l last_option
+Last shell option i.e: --
+.TP
+.B -o filename
+output to the file specified filename
+.TP
+.B -r
+Relax security. Make a redistributable binary which executes on
+different systems running the same operating system.
+.TP
+.B -v
+Verbose compilation
+.TP
+.B -D
+Switch on debug exec calls
+.TP
+.B -T
+Allow binary to be traceable (using strace, ptrace, truss, etc.)
+.TP
+.B -C
+Display license and exit
+.TP
+.B -A
+Display abstract and exit
+.TP
+.B -h
+Display help and exit
+.SH "ENVIRONMENT VARIABLES"
+.TP
+.B CC
+C compiler command [cc]
+.TP
+.B CFLAGS
+C compiler flags [none]
+.SH "EXAMPLES"
+.SM
+Compile a script which can be run on other systems with the trace
+option enabled:
+
+  example% \fBshc\fP -v -r -T -f myscript
+.SH "BUGS"
+The maximum size of the script that could be executed once compiled is limited
+by the operating system configuration parameter
+.B _SC_ARG_MAX
+(see
+.BR sysconf ( 2 )\c
+)
+.SH "AUTHOR1"
+Francisco Rosales
+<frosal@fi.upm.es>
+.SH "AUTHOR2"
+Jahidul Hamid
+<http://neurobin.github.com>
+.SH "REPORT BUGS TO"
+the authors.
