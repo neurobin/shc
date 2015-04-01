@@ -1,15 +1,16 @@
-
-Purpose:
+# Shell Script Compiler
 
 	A generic shell script compiler. Shc takes a script, which is
 	specified on the command line and produces C source code. The
 	generated source code is then compiled and linked to produce a
 	stripped binary executable. Use with care.
 
-Building:
+Install:
 
 	do a "make"
 	and then "sudo make install"
+
+	or simply run the "install" file provided, in terminal
 
 
 Testing:
