@@ -11,7 +11,11 @@ Install:
 	do a "make"
 	and then "sudo make install"
 
+<<<<<<< HEAD
 	or simply run the "install" file provided, in terminal
+=======
+	or simply run the "install" script/file provided, in terminal
+>>>>>>> master
 
 
 Testing:
@@ -19,8 +23,14 @@ Testing:
 	cd to test "directory": cd test
 	Try: shc -f test.bash -o test
 
+<<<<<<< HEAD
 	output binary file will be test
 	the sequence of -o -f options doesn't matter
+=======
+	output binary file will be test. If no output file is specified
+	by the -o option, then it will create an executable with .x extension
+	by default
+>>>>>>> master
 
 
 Known bugs:
