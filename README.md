@@ -36,7 +36,9 @@ Known bugs:
 	!! - CHECK YOUR RESULTS CAREFULLY BEFORE USING - !!
 
 
-Archived at: http://github.com/neurobin/shc/archive/release.zip.
+Released at https://github.com/neurobin/shc/archive/3.9.0.zip
+
+and https://github.com/neurobin/shc/archive/3.9.0.tar.gz
 
 Authors:  
 --------
