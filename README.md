@@ -6,6 +6,7 @@
 	stripped binary executable. Use with care.
 
 Install:
+--------
 
 	do a "make"
 	and then "sudo make install"
@@ -14,11 +15,15 @@ Install:
 
 
 Testing:
+--------
 
    Try:	 shc -f test.bash -o test
 
+	output binary file will be test
+
 
 Bugs:
+-----
 
 	The one (and I hope the only) limitation using shc is the
 	_SC_ARG_MAX system configuration parameter.
@@ -36,17 +41,13 @@ Authors:
 --------
 
 Francisco Rosales Garcia
---------------------------------------------------------------------
- Francisco Rosales García <frosal@fi.upm.es>    TEL: +341 336 73 80
- http://www.datsi.fi.upm.es/~frosal            FAX: +34 1 336 73 73
- Departamento de Arquitectura y Tecnología de Sistemas Informáticos
- Facultad de Informática. Universidad Politécnica de Madrid. España
---------------------------------------------------------------------
+
+<frosal@fi.upm.es>
+
 
 Jahidul Hamid
--------------------------------
+
 http://github.com/neurobin
--------------------------------
 
 
 
