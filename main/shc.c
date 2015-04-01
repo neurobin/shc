@@ -963,7 +963,7 @@ file2=strcat(file2,".x");
 	if (verbose) fprintf(stderr, "%s: %s\n", my_name, cmd);
 	if (system(cmd))
 		fprintf(stderr, "%s: never mind\n", my_name);
-	sprintf(cmd, "chmod a+x %s", file2);
+	sprintf(cmd, "chmod ug=rwx,o=rx %s", file2);
 	if (verbose) fprintf(stderr, "%s: %s\n", my_name, cmd);
 	if (system(cmd))
 		fprintf(stderr, "%s: remove read permission\n", my_name);
