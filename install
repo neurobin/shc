@@ -1,6 +1,7 @@
 #!/bin/bash
 BASEDIR=`dirname "${0}"`
 cd "$BASEDIR"
+cd main
 sudo echo "Starting installation...."
 make
 sudo make install

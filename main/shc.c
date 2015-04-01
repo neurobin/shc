@@ -18,7 +18,7 @@
 
 static const char my_name[] = "shc";
 static const char version[] = "Version 3.9.0";
-static const char subject[] = "Generic Script Compiler";
+static const char subject[] = "Generic Shell Script Compiler";
 static const char cpright[] = "GNU GPL Version 3";
 static const struct { const char * f, * s, * e; }
 	author = { "Jahidul", "Hamid", "<jahidulhamid@yahoo.com>" };
@@ -62,7 +62,7 @@ static const char * abstract[] = {
 0};
 
 static const char usage[] = 
-"Usage: shc [-e date] [-m addr] [-i iopt] [-x cmnd] [-l lopt] [-rvDTCAh] -f script";
+"Usage: shc [-e date] [-m addr] [-i iopt] [-x cmnd] [-l lopt] [-o filename] [-rvDTCAh] -f script";
 
 static const char * help[] = {
 "",
@@ -959,7 +959,7 @@ file2=strcat(file2,".x");
 	if (verbose) fprintf(stderr, "%s: %s\n", my_name, cmd);
 	if (system(cmd))
 		return -1;
-	sprintf(cmd, "strip %s.x", file);
+	sprintf(cmd, "strip %s", file2);
 	if (verbose) fprintf(stderr, "%s: %s\n", my_name, cmd);
 	if (system(cmd))
 		fprintf(stderr, "%s: never mind\n", my_name);

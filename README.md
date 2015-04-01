@@ -7,7 +7,7 @@
 
 Install:
 --------
-
+	cd to directory "main": cd main
 	do a "make"
 	and then "sudo make install"
 
@@ -16,14 +16,15 @@ Install:
 
 Testing:
 --------
-
-   Try:	 shc -f test.bash -o test
+	cd to test "directory": cd test
+	Try: shc -f test.bash -o test
 
 	output binary file will be test
+	the sequence of -o -f options doesn't matter
 
 
-Bugs:
------
+Known bugs:
+-----------
 
 	The one (and I hope the only) limitation using shc is the
 	_SC_ARG_MAX system configuration parameter.

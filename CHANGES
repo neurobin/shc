@@ -1,8 +1,8 @@
 CHANGES
 
-3.9.0   Wed Apr 1  07:31 AM GMT
+3.9.0   Wed Apr 01  08:35:22 AM 2015 GMT
 
-        Thanks to me http://github.com/neurobin
+        Thanks to me http://github.com/neurobin,
 	for adding output file option with [-o filename]
 	and fixing bug on make install (manual install failed)
 	Now you can access manual by entering command: man shc
