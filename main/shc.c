@@ -21,7 +21,13 @@ static const char version[] = "Version 3.9.0";
 static const char subject[] = "Generic Shell Script Compiler";
 static const char cpright[] = "GNU GPL Version 3";
 static const struct { const char * f, * s, * e; }
-	author = { "Jahidul", "Hamid", "<jahidulhamid@yahoo.com>" };
+	provider = { "Jahidul", "Hamid", "<jahidulhamid@yahoo.com>" };          
+
+/* 
+static const struct { const char * f, * s, * e; }
+	author = { "Francisco", "Garcia", "<frosal@fi.upm.es>" };
+*/
+/*This is the original author who first came up with this*/
 
 static const char * copying[] = {
 "Copying:",
@@ -485,16 +491,16 @@ static int parse_an_arg(int argc, char * argv[])
 		break;
 	case 'C':
 		fprintf(stderr, "%s %s, %s\n", my_name, version, subject);
-		fprintf(stderr, "%s %s %s %s %s\n", my_name, cpright, author.f, author.s, author.e);
+		fprintf(stderr, "%s %s %s %s %s\n", my_name, cpright, provider.f, provider.s, provider.e);
 		fprintf(stderr, "%s ", my_name);
 		for (l = 0; copying[l]; l++)
 			fprintf(stderr, "%s\n", copying[l]);
-		fprintf(stderr, "    %s %s %s\n\n", author.f, author.s, author.e);
+		fprintf(stderr, "    %s %s %s\n\n", provider.f, provider.s, provider.e);
 		exit(0);
 		break;
 	case 'A':
 		fprintf(stderr, "%s %s, %s\n", my_name, version, subject);
-		fprintf(stderr, "%s %s %s %s %s\n", my_name, cpright, author.f, author.s, author.e);
+		fprintf(stderr, "%s %s %s %s %s\n", my_name, cpright, provider.f, provider.s, provider.e);
 		fprintf(stderr, "%s ", my_name);
 		for (l = 0; abstract[l]; l++)
 			fprintf(stderr, "%s\n", abstract[l]);
@@ -502,7 +508,7 @@ static int parse_an_arg(int argc, char * argv[])
 		break;
 	case 'h':
 		fprintf(stderr, "%s %s, %s\n", my_name, version, subject);
-		fprintf(stderr, "%s %s %s %s %s\n", my_name, cpright, author.f, author.s, author.e);
+		fprintf(stderr, "%s %s %s %s %s\n", my_name, cpright, provider.f, provider.s, provider.e);
 		fprintf(stderr, "%s %s\n", my_name, usage);
 		for (l = 0; help[l]; l++)
 			fprintf(stderr, "%s\n", help[l]);
@@ -896,7 +902,7 @@ int write_C(char * file, char * argv[])
 	}
 	fprintf(o, "#if 0\n");
 	fprintf(o, "\t%s %s, %s\n", my_name, version, subject);
-	fprintf(o, "\t%s %s %s %s\n\n\t", cpright, author.f, author.s, author.e);
+	fprintf(o, "\t%s %s %s %s\n\n\t", cpright, provider.f, provider.s, provider.e);
 	for (indx = 0; argv[indx]; indx++)
 		fprintf(o, "%s ", argv[indx]);
 	fprintf(o, "\n#endif\n\n");
