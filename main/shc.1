@@ -12,16 +12,18 @@ shc - Generic shell script compiler
 .br
 [ \-\fBl\fP lopt ]
 [ \-\fBo\fP outfile ]
-[ \-\fBACDhTv\fP ]
+[ \-\fBACDhUv\fP ]
 \-\fBf\fP script
 .SH "DESCRIPTION"
 .B shc
 creates a stripped binary executable version of the script
 specified with \fI\-f\fP on the command line.
 
-The binary version will get a \fI.x\fP extension appended
+The binary version will get a \fI.x\fP extension appended by default if
+outfile is not defined with [-o outfile] option
 and will usually be a bit larger in size than the original ascii code.
 Generated C source code is saved in a file with the extension \fI.x.c\fP
+or in a file specified with appropriate option
 
 If you supply an expiration date with the \fI\-e\fP option the
 compiled binary will refuse to run after the date specified.
@@ -71,7 +73,8 @@ output to the file specified by filename
 .TP
 .B -r
 Relax security. Make a redistributable binary which executes on
-different systems running the same operating system.
+different systems running the same operating system. You can release
+your binary with this option for others to use
 .TP
 .B -v
 Verbose compilation
@@ -79,8 +82,8 @@ Verbose compilation
 .B -D
 Switch on debug exec calls
 .TP
-.B -T
-Allow binary to be traceable (using strace, ptrace, truss, etc.)
+.B -U
+Make binary to be untraceable (using strace, ptrace, truss, etc.)
 .TP
 .B -C
 Display license and exit
@@ -102,7 +105,7 @@ C compiler flags [none]
 Compile a script which can be run on other systems with the trace
 option enabled:
 
-  example% \fBshc\fP -v -r -T -f myscript
+  example% \fBshc\fP -v -r -U -f myscript
 .SH "BUGS"
 The maximum size of the script that could be executed once compiled is limited
 by the operating system configuration parameter

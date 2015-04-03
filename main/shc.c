@@ -129,7 +129,7 @@ static const char DEBUGEXEC_line[] =
 static int DEBUGEXEC_flag;
 static const char TRACEABLE_line[] =
 "#define TRACEABLE	%d	/* Define as 1 to enable ptrace the executable */\n";
-static int TRACEABLE_flag;
+static int TRACEABLE_flag=1;
 
 static const char * RTC[] = {
 "",
@@ -428,7 +428,7 @@ static const char * RTC[] = {
 static int parse_an_arg(int argc, char * argv[])
 {
 	extern char * optarg;
-	const char * opts = "e:m:f:i:x:l:o:rvDTCAh";
+	const char * opts = "e:m:f:i:x:l:o:rvDUCAh";
 	struct tm tmp[1];
 	time_t expdate;
 	int cnt, l;
@@ -486,8 +486,8 @@ static int parse_an_arg(int argc, char * argv[])
 	case 'D':
 		DEBUGEXEC_flag = 1;
 		break;
-	case 'T':
-		TRACEABLE_flag = 1;
+	case 'U':
+		TRACEABLE_flag = 0;
 		break;
 	case 'C':
 		fprintf(stderr, "%s %s, %s\n", my_name, version, subject);
