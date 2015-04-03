@@ -1,6 +1,14 @@
 CHANGES
 
-3.9.0   Wed Apr 01  08:35:22 AM 2015 GMT
+
+3.9.1	Fri Apr 03 00:22:11 GMT 2015
+	
+	Renamed  option -T to -U and reversed it's logic.
+	So now, the executable prepared will execute without using sudo,
+	by default.
+
+
+3.9.0   Wed Apr 01  08:35:22 AM GMT 2015 
 
         Thanks to me http://github.com/neurobin,
 	for adding output file option with [-o filename]
