@@ -68,7 +68,7 @@ static const char * abstract[] = {
 0};
 
 static const char usage[] = 
-"Usage: shc [-e date] [-m addr] [-i iopt] [-x cmnd] [-l lopt] [-o filename] [-rvDTCAh] -f script";
+"Usage: shc [-e date] [-m addr] [-i iopt] [-x cmnd] [-l lopt] [-o outfile] [-rvDUCAh] -f script";
 
 static const char * help[] = {
 "",
@@ -82,7 +82,7 @@ static const char * help[] = {
 "    -r     Relax security. Make a redistributable binary",
 "    -v     Verbose compilation",
 "    -D     Switch ON debug exec calls [OFF]",
-"    -T     Allow binary to be traceable [no]",
+"    -U     Make binary untraceable [no]",
 "    -C     Display license and exit",
 "    -A     Display abstract and exit",
 "    -h     Display help and exit",
