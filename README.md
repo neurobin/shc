@@ -34,6 +34,4 @@ Known bugs:
 	limiting the maximum length of the runnable script of shc.
 
 	!! - CHECK YOUR RESULTS CAREFULLY BEFORE USING - !!
-WebPage:
---------
-http://neurobin.github.io/shc
+<h2><a href="http://neurobin.github.io/shc">WebPage</a></h2>
