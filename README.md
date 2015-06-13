@@ -34,23 +34,6 @@ Known bugs:
 	limiting the maximum length of the runnable script of shc.
 
 	!! - CHECK YOUR RESULTS CAREFULLY BEFORE USING - !!
-
-
-Released at https://github.com/neurobin/shc/archive/3.9.0.zip
-
-and https://github.com/neurobin/shc/archive/3.9.0.tar.gz
-
-Authors:  
+WebPage:
 --------
-
-Francisco Rosales Garcia
-
-<frosal@fi.upm.es>
-
-
-Jahidul Hamid
-
-http://github.com/neurobin
-
-
-
+http://neurobin.github.io/shc
