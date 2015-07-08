@@ -13,6 +13,15 @@ Install:
 
 	or simply run the "install" script/file provided, in terminal
 
+Usage:
+------
+```
+shc [options]
+shc -f script.sh -o binary
+```
+
+N.B: The binary still requires the relevant shell to be available in the system to be run.
+
 
 Testing:
 --------
