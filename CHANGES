@@ -1,5 +1,10 @@
 CHANGES
 
+3.9.2	Fri Aug 21 16:12:33 BDT 2015
+	
+	Added BusyBox support with patch taken from:
+	https://onedrive.live.com/prev?cid=18a41d08a9f3c543&id=18A41D08A9F3C543!231&authkey=!AJQ6Iah_5D3WJ60&v=TextFileEditor
+	as suggested by https://github.com/marcoburatto
 
 3.9.1	Fri Apr 03 00:22:11 GMT 2015
 	

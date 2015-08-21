@@ -17,7 +17,7 @@
  */
 
 static const char my_name[] = "shc";
-static const char version[] = "Version 3.9.1";
+static const char version[] = "Version 3.9.2";
 static const char subject[] = "Generic Shell Script Compiler";
 static const char cpright[] = "GNU GPL Version 3";
 static const struct { const char * f, * s, * e; }
@@ -68,7 +68,7 @@ static const char * abstract[] = {
 0};
 
 static const char usage[] = 
-"Usage: shc [-e date] [-m addr] [-i iopt] [-x cmnd] [-l lopt] [-o outfile] [-rvDUCAh] -f script";
+"Usage: shc [-e date] [-m addr] [-i iopt] [-x cmnd] [-l lopt] [-o outfile] [-rvDUCABh] -f script";
 
 static const char * help[] = {
 "",
@@ -85,6 +85,7 @@ static const char * help[] = {
 "    -U     Make binary untraceable [no]",
 "    -C     Display license and exit",
 "    -A     Display abstract and exit",
+"    -B     Compile for busybox",
 "    -h     Display help and exit",
 "",
 "    Environment variables used:",
@@ -130,6 +131,9 @@ static int DEBUGEXEC_flag;
 static const char TRACEABLE_line[] =
 "#define TRACEABLE	%d	/* Define as 1 to enable ptrace the executable */\n";
 static int TRACEABLE_flag=1;
+static const char BUSYBOXON_line[] =
+"#define BUSYBOXON	%d	/* Define as 1 to enable work with busybox */\n";
+static int BUSYBOXON_flag;
 
 static const char * RTC[] = {
 "",
@@ -388,7 +392,12 @@ static const char * RTC[] = {
 "		}",
 "	}",
 "	j = 0;",
+"#if BUSYBOXON",
+"	varg[j++] = \"busybox\";",
+"	varg[j++] = \"sh\";",
+"#else",
 "	varg[j++] = argv[0];		/* My own name at execution */",
+"#endif",
 "	if (ret && *opts)",
 "		varg[j++] = opts;	/* Options on 1st line of code */",
 "	if (*inlo)",
@@ -428,7 +437,7 @@ static const char * RTC[] = {
 static int parse_an_arg(int argc, char * argv[])
 {
 	extern char * optarg;
-	const char * opts = "e:m:f:i:x:l:o:rvDUCAh";
+	const char * opts = "e:m:f:i:x:l:o:rvDUCABh";
 	struct tm tmp[1];
 	time_t expdate;
 	int cnt, l;
@@ -521,6 +530,9 @@ static int parse_an_arg(int argc, char * argv[])
 			return -1;
 		}
 		return 0;
+	case 'B':
+		BUSYBOXON_flag = 1;
+		break;
 	case ':':
 		fprintf(stderr, "%s parse: Missing parameter\n", my_name);
 		return -1;
@@ -935,6 +947,7 @@ int write_C(char * file, char * argv[])
 	fprintf(o, "#define      %s_z	%d\n", "hide", 1<<12);
 	fprintf(o, DEBUGEXEC_line, DEBUGEXEC_flag);
 	fprintf(o, TRACEABLE_line, TRACEABLE_flag);
+    fprintf(o, BUSYBOXON_line, BUSYBOXON_flag);
 	for (indx = 0; RTC[indx]; indx++)
 		fprintf(o, "%s\n", RTC[indx]);
 	fflush(o);
