@@ -1,0 +1,50 @@
+autoscan: warning: missing AC_CHECK_FUNCS([memset]) wanted by: 
+	shc.c:448
+	shc.c:640
+autoscan: warning: missing AC_CHECK_FUNCS([putenv]) wanted by: 
+	shc.c:1010
+autoscan: warning: missing AC_CHECK_FUNCS([strchr]) wanted by: 
+	shc.c:682
+autoscan: warning: missing AC_CHECK_FUNCS([strdup]) wanted by: 
+	shc.c:712
+	shc.c:714
+	shc.c:716
+	shc.c:850
+	shc.c:853
+	shc.c:858
+	shc.c:860
+	shc.c:862
+	shc.c:867
+	shc.c:869
+	shc.c:871
+autoscan: warning: missing AC_CHECK_FUNCS([strrchr]) wanted by: 
+	shc.c:555
+	shc.c:704
+autoscan: warning: missing AC_CHECK_HEADERS([fcntl.h]) wanted by: 
+	shc.c:105
+autoscan: warning: missing AC_CHECK_HEADERS([stdlib.h]) wanted by: 
+	shc.c:109
+autoscan: warning: missing AC_CHECK_HEADERS([string.h]) wanted by: 
+	shc.c:110
+autoscan: warning: missing AC_CHECK_HEADERS([unistd.h]) wanted by: 
+	shc.c:112
+autoscan: warning: missing AC_CHECK_MEMBERS([struct stat.st_rdev]) wanted by: 
+	shc.c:643
+	shc.c:643
+autoscan: warning: missing AC_FUNC_MALLOC wanted by: 
+	shc.c:687
+	shc.c:688
+	shc.c:689
+	shc.c:745
+autoscan: warning: missing AC_FUNC_MKTIME wanted by: 
+	shc.c:454
+autoscan: warning: missing AC_FUNC_REALLOC wanted by: 
+	shc.c:703
+	shc.c:727
+	shc.c:752
+	shc.c:761
+	shc.c:883
+	shc.c:908
+	shc.c:972
+autoscan: warning: missing AC_PROG_CC wanted by: 
+	shc.c
