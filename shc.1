@@ -104,11 +104,11 @@ C compiler command [cc]
 .B CFLAGS
 C compiler flags [none]
 .SH "EXAMPLES"
-.SM
-Compile a script which can be run on other systems with the trace
-option enabled:
 
-  example% \fBshc\fP -v -r -U -f myscript
+Compile a script which can be run on other systems with the trace
+option enabled (without -U flag):
+
+.B \fBshc\fP -f myscript -o mybinary
 .SH "BUGS"
 The maximum size of the script that could be executed once compiled is limited
 by the operating system configuration parameter
