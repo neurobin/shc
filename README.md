@@ -1,63 +1,56 @@
 # Shell Script Compiler
 
-A generic shell script compiler. Shc takes a script, which is
-specified on the command line and produces C source code. The
-generated source code is then compiled and linked to produce a
-stripped binary executable. 
+	A generic shell script compiler. Shc takes a script, which is
+	specified on the command line and produces C source code. The
+	generated source code is then compiled and linked to produce a
+	stripped binary executable. Use with care.
 
-The  compiled  binary  will  still  be dependent on the shell specified in the
-first line of the shell code (i.e shebang) (i.e. #!/bin/sh), thus shc does not  create  com‐
-pletely independent binaries.
+Install:
+--------
+	cd to directory "main": cd main
+	do a "make"
+	and then "sudo make install"
 
-shc  itself  is  not  a  compiler such as cc, it rather encodes and encrypts a
-shell script and generates C source code with the added expiration capability.
-It  then  uses  the system compiler to compile a stripped binary which behaves
-exactly like the original script. Upon execution,  the  compiled  binary  will
-decrypt  and  execute  the  code with the shell -c option.
-
-#Install:
-
-1. ./configure
-2. make
-3. sudo make install
-
-##On Ubuntu:
-
-```
-sudo add-apt-repository ppa:neurobin/ppa
-sudo apt-get update
-sudo apt-get install shc
-```
-
-If the above installation method seems like too much work, then just copy the compiled binary from `bin/x32` or `bin/x64` to `/usr/bin` and put the `shc.1` file in `/usr/share/man/man1`.
-
-#Usage:
-
-```
-shc [options]
-shc -f script.sh -o binary
-```
+	or simply run the "install" script/file provided, in terminal
 
 
+Testing:
+--------
+	cd to test "directory": cd test
+	Try: shc -f test.bash -o test
 
-#Testing:
-
-1. `cd` to `test` directory: `cd test`
-1. Try: `shc -f test.bash -o test`, where <span class="light-quote">test.bash</span> is the bash source.
-2. output binary file will be test. If no output file is specified
-by the `-o` option, then it will create an executable with `.x` extension by default.
-
-
-#Known bugs:
+	output binary file will be test. If no output file is specified
+	by the -o option, then it will create an executable with .x extension
+	by default
 
 
-The one (and I hope the only) limitation using shc is the
-_SC_ARG_MAX system configuration parameter.
+Known bugs:
+-----------
 
-It limits the maximum length of the arguments to the exec function,
-limiting the maximum length of the runnable script of shc.
+	The one (and I hope the only) limitation using shc is the
+	_SC_ARG_MAX system configuration parameter.
 
-!! - CHECK YOUR RESULTS CAREFULLY BEFORE USING - !!
-<h3><a href="http://neurobin.github.io/shc/man.html">Man Page</a></h3>
-<h3><a href="http://neurobin.github.io/shc">WebPage</a></h3>
+	It limits the maximum length of the arguments to the exec function,
+	limiting the maximum length of the runnable script of shc.
+
+	!! - CHECK YOUR RESULTS CAREFULLY BEFORE USING - !!
+
+
+Released at https://github.com/neurobin/shc/archive/3.9.0.zip
+
+and https://github.com/neurobin/shc/archive/3.9.0.tar.gz
+
+Authors:  
+--------
+
+Francisco Rosales Garcia
+
+<frosal@fi.upm.es>
+
+
+Jahidul Hamid
+
+http://github.com/neurobin
+
+
 

@@ -1,4 +1,4 @@
-.TH  shc 1  "Aug 25, 2015" "shc Version 3.9.2"
+.TH  shc 1  "Apr 1, 2015" "shc Version 3.9"
 .UC 4
 
 .SH "NAME"
@@ -12,18 +12,16 @@ shc - Generic shell script compiler
 .br
 [ \-\fBl\fP lopt ]
 [ \-\fBo\fP outfile ]
-[ \-\fBABCDhUv\fP ]
+[ \-\fBACDhTv\fP ]
 \-\fBf\fP script
 .SH "DESCRIPTION"
 .B shc
 creates a stripped binary executable version of the script
 specified with \fI\-f\fP on the command line.
 
-The binary version will get a \fI.x\fP extension appended by default if
-outfile is not defined with [-o outfile] option
+The binary version will get a \fI.x\fP extension appended
 and will usually be a bit larger in size than the original ascii code.
 Generated C source code is saved in a file with the extension \fI.x.c\fP
-or in a file specified with appropriate option
 
 If you supply an expiration date with the \fI\-e\fP option the
 compiled binary will refuse to run after the date specified.
@@ -73,8 +71,7 @@ output to the file specified by filename
 .TP
 .B -r
 Relax security. Make a redistributable binary which executes on
-different systems running the same operating system. You can release
-your binary with this option for others to use
+different systems running the same operating system.
 .TP
 .B -v
 Verbose compilation
@@ -82,17 +79,14 @@ Verbose compilation
 .B -D
 Switch on debug exec calls
 .TP
-.B -U
-Make binary to be untraceable (using strace, ptrace, truss, etc.)
+.B -T
+Allow binary to be traceable (using strace, ptrace, truss, etc.)
 .TP
 .B -C
 Display license and exit
 .TP
 .B -A
 Display abstract and exit
-.TP
-.B -B
-Compile for BusyBox
 .TP
 .B -h
 Display help and exit
@@ -104,11 +98,11 @@ C compiler command [cc]
 .B CFLAGS
 C compiler flags [none]
 .SH "EXAMPLES"
-
+.SM
 Compile a script which can be run on other systems with the trace
-option enabled (without -U flag):
+option enabled:
 
-.B \fBshc\fP -f myscript -o mybinary
+  example% \fBshc\fP -v -r -T -f myscript
 .SH "BUGS"
 The maximum size of the script that could be executed once compiled is limited
 by the operating system configuration parameter
@@ -123,5 +117,4 @@ Francisco Rosales
 Jahidul Hamid
 <http://github.com/neurobin>
 .SH "REPORT BUGS TO"
-<http://github.com/neurobin/shc/issues>
-
+the authors.
