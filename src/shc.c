@@ -664,6 +664,7 @@ struct {
 	{ "rc",   "-c", "",   "builtin exec %s $*" },
 	{ "sh",   "-c", "",   "exec '%s' \"$@\"" }, /* IRIX_nvi */
 	{ "bash", "-c", "",   "exec '%s' \"$@\"" },
+	{ "zsh",  "-c", "",   "exec '%s' \"$@\"" },
 	{ "bsh",  "-c", "",   "exec '%s' \"$@\"" }, /* AIX_nvi */
 	{ "Rsh",  "-c", "",   "exec '%s' \"$@\"" }, /* AIX_nvi */
 	{ "ksh",  "-c", "",   "exec '%s' \"$@\"" }, /* OK on Solaris, AIX and Linux (THX <bryan.hogan@dstintl.com>) */
