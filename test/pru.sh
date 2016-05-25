@@ -1,4 +1,4 @@
-#! /bin/sh -x
+#!/bin/sh -x
 echo "$0" "$@"
 ps $$
 ps wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww  $$

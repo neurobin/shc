@@ -1,4 +1,4 @@
-#! /usr/bin/ksh -x
+#!/usr/bin/ksh -x
 echo "\$@ is $@"
 echo "command line: $0 $*"
 echo "hello world"
