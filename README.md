@@ -1,3 +1,5 @@
+[![Codewake](https://www.codewake.com/badges/ask_question.svg)](https://www.codewake.com/p/shc)
+
 # Shell Script Compiler
 
 A generic shell script compiler. Shc takes a script, which is
