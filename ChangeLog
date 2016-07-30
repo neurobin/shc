@@ -1,5 +1,11 @@
 CHANGES
 
+3.9.3   Sat Jul 30 18:46:34 BDT 2016
+
+    * zsh support
+    * Fix issue #13 (https://github.com/neurobin/shc/issues/13)
+    
+
 3.9.2	Fri Aug 21 16:12:33 BDT 2015
 	
 	Added BusyBox support with patch taken from:
@@ -15,9 +21,9 @@ CHANGES
 
 3.9.0   Wed Apr 01  08:35:22 AM GMT 2015 
 
-        Thanks to me http://github.com/neurobin,
-	for adding output file option with [-o filename]
-	and fixing bug on make install (manual install failed)
+    (http://github.com/neurobin)
+	Added output file option with [-o filename]
+	and fixed bug on make install (manual install failed)
 	Now you can access manual by entering command: man shc
 	in a terminal.
         
