@@ -23,6 +23,8 @@ decrypt  and  execute  the  code with the shell -c option.
 2. make
 3. sudo make install
 
+**Note:** If `make` fails due to *automake* version, run `./autogen.sh` before running the above commands.
+
 ##On Ubuntu:
 
 ```
