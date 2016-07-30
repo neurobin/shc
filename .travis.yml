@@ -1,5 +1,8 @@
 sudo: required
 dist: xenial
 language: c
+before-install:
+  - sudo sudo apt-get update -q
+  - sudo apt-get install automake
 script: ./configure && make && make check
 
