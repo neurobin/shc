@@ -1,3 +1,4 @@
+sudo: required
 language: c
 script: ./configure && make && make check
 
