@@ -13,6 +13,7 @@ configure diff=nodiff
 /config/* linguist-vendored
 /m4/* linguist-vendored
 *.md linguist-documentation
+shc.1 linguist-documentation
 /doc/* linguist-documentation
 *.html linguist-documentation
 *.css linguist-vendored
