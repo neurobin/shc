@@ -1,4 +1,4 @@
 sudo: required
 language: c
-script: ./autogen.sh && ./configure && make && make check
+script: ./autogen.sh; ./configure && make && make check
 
