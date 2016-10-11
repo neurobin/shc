@@ -1,0 +1,11 @@
+/build
+/autom4te.cache
+*.scan
+/img
+/doc
+*.bak
+/.project
+/.settings
+*.png
+*.jpg
+*.log
