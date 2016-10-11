@@ -21,3 +21,4 @@ configure diff=nodiff
 *.in linguist-vendored diff=nodiff
 *.m4 linguist-vendored diff=nodiff
 *.scan linguist-vendored
+shc linguist-vendored diff=nodiff
