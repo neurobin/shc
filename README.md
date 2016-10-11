@@ -1,4 +1,4 @@
-[![build status image](https://travis-ci.org/neurobin/shc.svg?branch=release)](https://travis-ci.org/neurobin/shc) [![Codewake](https://www.codewake.com/badges/ask_question.svg)](https://www.codewake.com/p/shc)
+[![build status image](https://travis-ci.org/neurobin/shc.svg?branch=release)](https://travis-ci.org/neurobin/shc)
 
 # Shell Script Compiler
 
