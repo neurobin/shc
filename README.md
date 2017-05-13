@@ -17,7 +17,7 @@ It  then  uses  the system compiler to compile a stripped binary which behaves
 exactly like the original script. Upon execution,  the  compiled  binary  will
 decrypt  and  execute  the  code with the shell -c option.
 
-#Install:
+# Install:
 
 1. ./configure
 2. make
@@ -25,7 +25,7 @@ decrypt  and  execute  the  code with the shell -c option.
 
 **Note:** If `make` fails due to *automake* version, run `./autogen.sh` before running the above commands.
 
-##On Ubuntu:
+## On Ubuntu:
 
 ```
 sudo add-apt-repository ppa:neurobin/ppa
@@ -35,7 +35,7 @@ sudo apt-get install shc
 
 If the above installation method seems like too much work, then just copy the compiled binary from `bin/x32` or `bin/x64` to `/usr/bin` and put the `shc.1` file in `/usr/share/man/man1`.
 
-#Usage:
+# Usage:
 
 ```
 shc [options]
@@ -45,7 +45,7 @@ shc -U -f script.sh -o binary # Untraceable binary (prevent strace, ptrace etc..
 
 
 
-#Testing:
+# Testing:
 
 1. `cd` to `test` directory: `cd test`
 1. Try: `shc -f test.bash -o test`, where <span class="light-quote">test.bash</span> is the bash source.
@@ -53,7 +53,7 @@ shc -U -f script.sh -o binary # Untraceable binary (prevent strace, ptrace etc..
 by the `-o` option, then it will create an executable with `.x` extension by default.
 
 
-#Known bugs:
+# Known bugs:
 
 
 The one (and I hope the only) limitation using shc is the

@@ -1,5 +1,9 @@
 CHANGES
 
+3.9.4   Sat May 13 18:46:05 UTC 2017
+
+    * Fix issue #23 (debian bug #861180)
+
 3.9.3   Sat Jul 30 18:46:34 BDT 2016
 
     * zsh support
