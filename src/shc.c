@@ -17,7 +17,7 @@
  */
 
 static const char my_name[] = "shc";
-static const char version[] = "Version 3.9.3";
+static const char version[] = "Version 3.9.4";
 static const char subject[] = "Generic Shell Script Compiler";
 static const char cpright[] = "GNU GPL Version 3";
 static const struct { const char * f, * s, * e; }
@@ -251,6 +251,8 @@ static const char * RTC[] = {
 "		*argv = argv[1];",
 "}",
 "",
+"void chkenv_end(void);",
+"",
 "int chkenv(int argc)",
 "{",
 "	char buff[512];",
@@ -259,8 +261,12 @@ static const char * RTC[] = {
 "	char * string;",
 "	extern char ** environ;",
 "",
-"	mask  = (unsigned long)&chkenv;",
-"	mask ^= (unsigned long)getpid() * ~mask;",
+"	mask = (unsigned long)getpid();",
+"	stte_0();",
+"	 key(&chkenv, (void*)&chkenv_end - (void*)&chkenv);",
+"	 key(&data, sizeof(data));",
+"	 key(&mask, sizeof(mask));",
+"	arc4(&mask, sizeof(mask));",
 "	sprintf(buff, \"x%lx\", mask);",
 "	string = getenv(buff);",
 "#if DEBUGEXEC",
@@ -281,6 +287,8 @@ static const char * RTC[] = {
 "	}",
 "	return -1;",
 "}",
+"",
+"void chkenv_end(void){}",
 "",
 "#if !TRACEABLE",
 "",
@@ -343,6 +351,7 @@ static const char * RTC[] = {
 "	char * me = getenv(\"_\");",
 "	if (me == NULL || !isFile(me)) { me = argv[0]; }",
 "",
+"	ret = chkenv(argc);",
 "	stte_0();",
 "	 key(pswd, pswd_z);",
 "	arc4(msg1, msg1_z);",
@@ -358,7 +367,6 @@ static const char * RTC[] = {
 "	arc4(chk1, chk1_z);",
 "	if ((chk1_z != tst1_z) || memcmp(tst1, chk1, tst1_z))",
 "		return tst1;",
-"	ret = chkenv(argc);",
 "	arc4(msg2, msg2_z);",
 "	if (ret < 0)",
 "		return msg2;",
