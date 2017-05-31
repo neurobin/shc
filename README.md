@@ -33,7 +33,7 @@ sudo apt-get update
 sudo apt-get install shc
 ```
 
-If the above installation method seems like too much work, then just copy the compiled binary from `bin/x32` or `bin/x64` to `/usr/bin` and put the `shc.1` file in `/usr/share/man/man1`.
+If the above installation method seems like too much work, then just download a compiled binary package from [release page](https://github.com/neurobin/shc/releases/latest) and copy the `shc` binary to `/usr/bin` and `shc.1` file to `/usr/share/man/man1`.
 
 # Usage:
 
