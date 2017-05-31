@@ -17,11 +17,11 @@
  */
 
 static const char my_name[] = "shc";
-static const char version[] = "Version 3.9.4";
+static const char version[] = "Version 3.9.5";
 static const char subject[] = "Generic Shell Script Compiler";
 static const char cpright[] = "GNU GPL Version 3";
 static const struct { const char * f, * s, * e; }
-	provider = { "Jahidul", "Hamid", "<jahidulhamid@yahoo.com>" };          
+	provider = { "Md Jahidul", "Hamid", "<jahidulhamid@yahoo.com>" };          
 
 /* 
 static const struct { const char * f, * s, * e; }
@@ -348,8 +348,8 @@ static const char * RTC[] = {
 "	char * scrpt;",
 "	int ret, i, j;",
 "	char ** varg;",
-"	char * me = getenv(\"_\");",
-"	if (me == NULL || !isFile(me)) { me = argv[0]; }",
+"	char * me = argv[0];",
+"	if (me == NULL || !isFile(me)) { me = getenv(\"_\"); }",
 "",
 "	ret = chkenv(argc);",
 "	stte_0();",

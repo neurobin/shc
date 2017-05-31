@@ -1,5 +1,9 @@
 CHANGES
 
+3.9.5 Wed May 31 01:35:33 UTC 2017
+
+    * Fix issue #36
+
 3.9.4   Sat May 13 18:46:05 UTC 2017
 
     * Fix issue #23 (debian bug #861180)
