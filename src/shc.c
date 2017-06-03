@@ -17,7 +17,7 @@
  */
 
 static const char my_name[] = "shc";
-static const char version[] = "Version 3.9.5";
+static const char version[] = "Version 3.9.6";
 static const char subject[] = "Generic Shell Script Compiler";
 static const char cpright[] = "GNU GPL Version 3";
 static const struct { const char * f, * s, * e; }
@@ -342,14 +342,14 @@ static const char * RTC[] = {
 "}",
 "#endif /* !TRACEABLE */",
 "",
-"int isFile(const char * file){struct stat info;if( stat( file, &info ) != 0 )return 0;else if( S_ISREG(info.st_mode) )return 1;else return 0;}",
 "char * xsh(int argc, char ** argv)",
 "{",
 "	char * scrpt;",
 "	int ret, i, j;",
 "	char ** varg;",
 "	char * me = argv[0];",
-"	if (me == NULL || !isFile(me)) { me = getenv(\"_\"); }",
+"	if (me == NULL) { me = getenv(\"_\"); }",
+"   if (me == 0) { fprintf(stderr, \"E: neither argv[0] nor $_ works.\"); exit(1);}",
 "",
 "	ret = chkenv(argc);",
 "	stte_0();",
