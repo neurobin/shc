@@ -349,7 +349,7 @@ static const char * RTC[] = {
 "	char ** varg;",
 "	char * me = argv[0];",
 "	if (me == NULL) { me = getenv(\"_\"); }",
-"   if (me == 0) { fprintf(stderr, \"E: neither argv[0] nor $_ works.\"); exit(1);}",
+"	if (me == 0) { fprintf(stderr, \"E: neither argv[0] nor $_ works.\"); exit(1); }",
 "",
 "	ret = chkenv(argc);",
 "	stte_0();",
