@@ -19,9 +19,7 @@ AC_CHECK_HEADERS([fcntl.h stdlib.h string.h unistd.h])
 AC_CHECK_MEMBERS([struct stat.st_rdev])
 
 # Checks for library functions.
-AC_FUNC_MALLOC
 AC_FUNC_MKTIME
-AC_FUNC_REALLOC
 AC_CHECK_FUNCS([memset putenv strchr strdup strrchr])
 
 

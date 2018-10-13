@@ -774,6 +774,7 @@ char * read_script(char * file)
 	text[l] = '\0';
 
 	/* Check current System ARG_MAX limit. */
+#ifndef __MINGW32__
 	if (l > 0.80 * (cnt = sysconf(_SC_ARG_MAX))) {
 		fprintf(stderr, "%s: WARNING!!\n"
 "   Scripts of length near to (or higher than) the current System limit on\n"
@@ -782,6 +783,7 @@ char * read_script(char * file)
 "   and your script \"%s\" is %d bytes length.\n",
 		my_name, cnt, file, l);
 	}
+#endif
 	return text;
 }
 
