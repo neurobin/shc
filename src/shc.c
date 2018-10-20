@@ -17,7 +17,7 @@
  */
 
 static const char my_name[] = "shc";
-static const char version[] = "Version 3.9.7";
+static const char version[] = "Version 3.9.8";
 static const char subject[] = "Generic Shell Script Compiler";
 static const char cpright[] = "GNU GPL Version 3";
 static const struct { const char * f, * s, * e; }
@@ -81,6 +81,7 @@ static const char * help[] = {
 "    -o %s  output filename",
 "    -r     Relax security. Make a redistributable binary",
 "    -v     Verbose compilation",
+"    -S     Switch ON setuid for root callable programs [OFF]",
 "    -D     Switch ON debug exec calls [OFF]",
 "    -U     Make binary untraceable [no]",
 "    -C     Display license and exit",
@@ -125,6 +126,9 @@ static char * lsto;
 static char * opts;
 static char * text;
 static int verbose;
+static const char SETUID_line[] =
+"#define SETUID %d	/* Define as 1 to call setuid(0) at start of script */\n";
+static int SETUID_flag;
 static const char DEBUGEXEC_line[] =
 "#define DEBUGEXEC	%d	/* Define as 1 to debug execvp calls */\n";
 static int DEBUGEXEC_flag;
@@ -431,6 +435,9 @@ static const char * RTC[] = {
 "",
 "int main(int argc, char ** argv)",
 "{",
+"#if SETUID",
+"   setuid(0);",
+"#endif",
 "#if DEBUGEXEC",
 "	debugexec(\"main\", argc, argv);",
 "#endif",
@@ -450,7 +457,7 @@ static const char * RTC[] = {
 static int parse_an_arg(int argc, char * argv[])
 {
 	extern char * optarg;
-	const char * opts = "e:m:f:i:x:l:o:rvDUCABh";
+	const char * opts = "e:m:f:i:x:l:o:rvDSUCABh";
 	struct tm tmp[1];
 	time_t expdate;
 	int cnt, l;
@@ -505,6 +512,9 @@ static int parse_an_arg(int argc, char * argv[])
 	case 'v':
 		verbose++;
 		break;
+	case 'S':
+		SETUID_flag = 1;
+        break;
 	case 'D':
 		DEBUGEXEC_flag = 1;
 		break;
@@ -908,7 +918,7 @@ int write_C(char * file, char * argv[])
 	indx = !rlax[0];
 	arc4(rlax, rlax_z); numd++;
 	if (indx && key_with_file(kwsh)) {
-		fprintf(stderr, "%s: invalid file name: %s", my_name, kwsh);
+		fprintf(stderr, "%s: invalid file name: %s ", my_name, kwsh);
 		perror("");
 		exit(1);
 	}
@@ -922,7 +932,7 @@ int write_C(char * file, char * argv[])
 	name = strcat(realloc(name, strlen(name)+5), ".x.c");
 	o = fopen(name, "w");
 	if (!o) {
-		fprintf(stderr, "%s: creating output file: %s", my_name, name);
+		fprintf(stderr, "%s: creating output file: %s ", my_name, name);
 		perror("");
 		exit(1);
 	}
@@ -959,6 +969,7 @@ int write_C(char * file, char * argv[])
 	} while (numd+=done);
 	fprintf(o, "/* End of data[] */;\n");
 	fprintf(o, "#define      %s_z	%d\n", "hide", 1<<12);
+	fprintf(o, SETUID_line, SETUID_flag);
 	fprintf(o, DEBUGEXEC_line, DEBUGEXEC_flag);
 	fprintf(o, TRACEABLE_line, TRACEABLE_flag);
     fprintf(o, BUSYBOXON_line, BUSYBOXON_flag);
