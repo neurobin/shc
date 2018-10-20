@@ -1,5 +1,13 @@
 CHANGES
 
+3.9.8 Sat Oct 20 17:49:28 UTC 2018
+
+	* Add setuid option -S
+
+3.9.7 Sat Oct 20 15:25:13 UTC 2018
+
+	* Fix issue #58
+
 3.9.6 Sat Jun  3 10:05:03 UTC 2017
 
     * Fix issue #38
