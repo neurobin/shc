@@ -17,7 +17,7 @@
  */
 
 static const char my_name[] = "shc";
-static const char version[] = "Version 3.9.7";
+static const char version[] = "Version 3.9.8";
 static const char subject[] = "Generic Shell Script Compiler";
 static const char cpright[] = "GNU GPL Version 3";
 static const struct { const char * f, * s, * e; }
@@ -918,7 +918,7 @@ int write_C(char * file, char * argv[])
 	indx = !rlax[0];
 	arc4(rlax, rlax_z); numd++;
 	if (indx && key_with_file(kwsh)) {
-		fprintf(stderr, "%s: invalid file name: %s", my_name, kwsh);
+		fprintf(stderr, "%s: invalid file name: %s ", my_name, kwsh);
 		perror("");
 		exit(1);
 	}
@@ -932,7 +932,7 @@ int write_C(char * file, char * argv[])
 	name = strcat(realloc(name, strlen(name)+5), ".x.c");
 	o = fopen(name, "w");
 	if (!o) {
-		fprintf(stderr, "%s: creating output file: %s", my_name, name);
+		fprintf(stderr, "%s: creating output file: %s ", my_name, name);
 		perror("");
 		exit(1);
 	}
