@@ -17,7 +17,7 @@
  */
 
 static const char my_name[] = "shc";
-static const char version[] = "Version 3.9.6";
+static const char version[] = "Version 3.9.7";
 static const char subject[] = "Generic Shell Script Compiler";
 static const char cpright[] = "GNU GPL Version 3";
 static const struct { const char * f, * s, * e; }
@@ -301,8 +301,12 @@ static const char * RTC[] = {
 "#include <stdio.h>",
 "#include <unistd.h>",
 "",
-"#if !defined(PTRACE_ATTACH) && defined(PT_ATTACH)",
-"#	define PTRACE_ATTACH	PT_ATTACH",
+"#if !defined(PT_ATTACHEXC) /* New replacement for PT_ATTACH */",
+"   #if !defined(PTRACE_ATTACH) && defined(PT_ATTACH)",
+"       #define PT_ATTACHEXC	PT_ATTACH",
+"   #elif defined(PTRACE_ATTACH)",
+"       #define PT_ATTACHEXC PTRACE_ATTACH",
+"   #endif",
 "#endif",
 
 "void untraceable(char * argv0)",
@@ -322,7 +326,7 @@ static const char * RTC[] = {
 "		close(0);",
 "		mine = !open(proc, O_RDWR|O_EXCL);",
 "		if (!mine && errno != EBUSY)",
-"			mine = !ptrace(PTRACE_ATTACH, pid, 0, 0);",
+"			mine = !ptrace(PT_ATTACHEXC, pid, 0, 0);",
 "		if (mine) {",
 "			kill(pid, SIGCONT);",
 "		} else {",
