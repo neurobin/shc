@@ -4,7 +4,8 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="pandoc" />
-  <meta name="date" content="2017-05-17" />
+  <meta name="author" content="" />
+  <meta name="date" content="2018-10-21" />
   <title>shc(1) shc user manual</title>
   <style type="text/css">code{white-space: pre;}</style>
   <style type="text/css">
@@ -48,7 +49,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <body>
 <div id="header">
 <h1 class="title">shc(1) shc user manual</h1>
-<h3 class="date">May 17, 2017</h3>
+<h2 class="author"></h2>
+<h3 class="date">October 21, 2018</h3>
 </div>
 <hr>
 <h1 id="name">NAME</h1>
@@ -92,6 +94,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <dt>-v</dt>
 <dd>Verbose compilation
 </dd>
+<dt>-S</dt>
+<dd>Switch ON setuid for root callable programs [OFF]
+</dd>
 <dt>-D</dt>
 <dd>Switch on debug exec calls
 </dd>
@@ -122,24 +127,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </dl>
 <h1 id="examples">EXAMPLES</h1>
 <p>Compile a script which can be run on other systems with the trace option enabled (without <code>-U</code> flag):</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">shc</span> -f myscript -o mybinary</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">shc</span> -f myscript -o mybinary</code></pre></div>
 <p>Compile an untraceable binary:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">shc</span> -Uf myscript -o mybinary</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">shc</span> -Uf myscript -o mybinary</code></pre></div>
 <h1 id="bugs">BUGS</h1>
 <p>The maximum size of the script that could be executed once compiled is limited by the operating system configuration parameter <code>_SC_ARG_MAX</code> (see sysconf(2))</p>
 <h1 id="authors">AUTHORS</h1>
-<p>Francisco Rosales <script type="text/javascript">
-<!--
-h='&#102;&#x69;&#46;&#x75;&#112;&#x6d;&#46;&#x65;&#x73;';a='&#64;';n='&#102;&#114;&#x6f;&#x73;&#x61;&#108;';e=n+a+h;
-document.write('<a h'+'ref'+'="ma'+'ilto'+':'+e+'" clas'+'s="em' + 'ail">'+e+'<\/'+'a'+'>');
-// -->
-</script><noscript>&#102;&#114;&#x6f;&#x73;&#x61;&#108;&#32;&#x61;&#116;&#32;&#102;&#x69;&#32;&#100;&#x6f;&#116;&#32;&#x75;&#112;&#x6d;&#32;&#100;&#x6f;&#116;&#32;&#x65;&#x73;</noscript></p>
-<p>Md Jahidul Hamid <script type="text/javascript">
-<!--
-h='&#x79;&#x61;&#104;&#x6f;&#x6f;&#46;&#x63;&#x6f;&#x6d;';a='&#64;';n='&#106;&#x61;&#104;&#x69;&#100;&#x75;&#108;&#104;&#x61;&#x6d;&#x69;&#100;';e=n+a+h;
-document.write('<a h'+'ref'+'="ma'+'ilto'+':'+e+'" clas'+'s="em' + 'ail">'+e+'<\/'+'a'+'>');
-// -->
-</script><noscript>&#106;&#x61;&#104;&#x69;&#100;&#x75;&#108;&#104;&#x61;&#x6d;&#x69;&#100;&#32;&#x61;&#116;&#32;&#x79;&#x61;&#104;&#x6f;&#x6f;&#32;&#100;&#x6f;&#116;&#32;&#x63;&#x6f;&#x6d;</noscript></p>
+<p>Francisco Rosales <a href="mailto:frosal@fi.upm.es">frosal@fi.upm.es</a></p>
+<p>Md Jahidul Hamid <a href="mailto:jahidulhamid@yahoo.com">jahidulhamid@yahoo.com</a></p>
 <h1 id="report-bugs-to">REPORT BUGS TO</h1>
 <p><a href="https://github.com/neurobin/shc/issues" class="uri">https://github.com/neurobin/shc/issues</a></p>
 </body>

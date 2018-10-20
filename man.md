@@ -1,6 +1,6 @@
 % shc(1) shc user manual
 %
-% May 17, 2017
+% October 21, 2018
 <hr>
 
 # NAME
@@ -60,6 +60,9 @@ You can use it if you wish to distribute your scripts but don't want them to be 
 
 -v
 : Verbose compilation 
+
+-S
+: Switch ON setuid for root callable programs [OFF]
 
 -D
 : Switch on debug exec calls 
