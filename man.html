@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <meta name="date" content="2017-05-17" />
+  <title>shc(1) shc user manual</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+</head>
+<body>
+<div id="header">
+<h1 class="title">shc(1) shc user manual</h1>
+<h3 class="date">May 17, 2017</h3>
+</div>
+<hr>
+<h1 id="name">NAME</h1>
+<p>shc - Generic shell script compiler</p>
+<h1 id="synopsis">SYNOPSIS</h1>
+<p><strong>shc</strong> [ -e <em>date</em> ] [ -m <em>addr</em> ] [ -i <em>iopt</em> ] [ -x <em>cmnd</em> ] [ -l <em>lopt</em> ] [ -o <em>outfile</em> ] [ -ABCDhUv ] -f <em>script</em></p>
+<h1 id="description">DESCRIPTION</h1>
+<p><strong>shc</strong> creates a stripped binary executable version of the script specified with <code>-f</code> on the command line.</p>
+<p>The binary version will get a <code>.x</code> extension appended by default if <em>outfile</em> is not defined with [-o <em>outfile</em>] option and will usually be a bit larger in size than the original ascii code. Generated C source code is saved in a file with the extension <code>.x.c</code> or in a file specified with appropriate option.</p>
+<p>If you supply an expiration date with the <code>-e</code> option, the compiled binary will refuse to run after the date specified. The message <strong>Please contact your provider</strong> will be displayed instead. This message can be changed with the <code>-m</code> option.</p>
+<p>You can compile any kind of shell script, but you need to supply valid <code>-i</code>, <code>-x</code> and <code>-l</code> options.</p>
+<p>The compiled binary will still be dependent on the shell specified in the first line of the shell code (i.e. <code>#!/bin/sh</code>), thus <strong>shc</strong> does not create completely independent binaries.</p>
+<p><strong>shc</strong> itself is not a compiler such as cc, it rather encodes and encrypts a shell script and generates C source code with the added expiration capability. It then uses the system compiler to compile a stripped binary which behaves exactly like the original script. Upon execution, the compiled binary will decrypt and execute the code with the shell <code>-c</code> option. Unfortunatelly, it will not give you any speed improvement as a real C program would.</p>
+<p><strong>shc</strong>'s main purpose is to protect your shell scripts from modification or inspection. You can use it if you wish to distribute your scripts but don't want them to be easily readable by other people.</p>
+<h1 id="options">OPTIONS</h1>
+<dl>
+<dt>-e <em>date</em></dt>
+<dd>Expiration date in <em>dd/mm/yyyy</em> format <code>[none]</code>
+</dd>
+<dt>-m <em>message</em></dt>
+<dd>message to display upon expiration <code>[&quot;Please contact your provider&quot;]</code>
+</dd>
+<dt>-f <em>script_name</em></dt>
+<dd>File path of the script to compile
+</dd>
+<dt>-i <em>inline_option</em></dt>
+<dd>Inline option for the shell interpreter i.e: <code>-e</code>
+</dd>
+<dt>-x <em>command</em></dt>
+<dd>eXec command, as a printf format i.e: <code>exec(\\'%s\\',@ARGV);</code>
+</dd>
+<dt>-l <em>last_option</em></dt>
+<dd>Last shell option i.e: <code>--</code>
+</dd>
+<dt>-o <em>outfile</em></dt>
+<dd>output to the file specified by outfile
+</dd>
+<dt>-r</dt>
+<dd>Relax security. Make a redistributable binary which executes on different systems running the same operating system. You can release your binary with this option for others to use
+</dd>
+<dt>-v</dt>
+<dd>Verbose compilation
+</dd>
+<dt>-D</dt>
+<dd>Switch on debug exec calls
+</dd>
+<dt>-U</dt>
+<dd>Make binary to be untraceable (using <em>strace</em>, <em>ptrace</em>, <em>truss</em>, etc.)
+</dd>
+<dt>-C</dt>
+<dd>Display license and exit
+</dd>
+<dt>-A</dt>
+<dd>Display abstract and exit
+</dd>
+<dt>-B</dt>
+<dd>Compile for BusyBox
+</dd>
+<dt>-h</dt>
+<dd>Display help and exit
+</dd>
+</dl>
+<h1 id="environment-variables">ENVIRONMENT VARIABLES</h1>
+<dl>
+<dt>CC</dt>
+<dd>C compiler command <code>[cc]</code>
+</dd>
+<dt>CFLAGS</dt>
+<dd>C compiler flags <code>[none]</code>
+</dd>
+</dl>
+<h1 id="examples">EXAMPLES</h1>
+<p>Compile a script which can be run on other systems with the trace option enabled (without <code>-U</code> flag):</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">shc</span> -f myscript -o mybinary</code></pre></div>
+<p>Compile an untraceable binary:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">shc</span> -Uf myscript -o mybinary</code></pre></div>
+<h1 id="bugs">BUGS</h1>
+<p>The maximum size of the script that could be executed once compiled is limited by the operating system configuration parameter <code>_SC_ARG_MAX</code> (see sysconf(2))</p>
+<h1 id="authors">AUTHORS</h1>
+<p>Francisco Rosales <script type="text/javascript">
+<!--
+h='&#102;&#x69;&#46;&#x75;&#112;&#x6d;&#46;&#x65;&#x73;';a='&#64;';n='&#102;&#114;&#x6f;&#x73;&#x61;&#108;';e=n+a+h;
+document.write('<a h'+'ref'+'="ma'+'ilto'+':'+e+'" clas'+'s="em' + 'ail">'+e+'<\/'+'a'+'>');
+// -->
+</script><noscript>&#102;&#114;&#x6f;&#x73;&#x61;&#108;&#32;&#x61;&#116;&#32;&#102;&#x69;&#32;&#100;&#x6f;&#116;&#32;&#x75;&#112;&#x6d;&#32;&#100;&#x6f;&#116;&#32;&#x65;&#x73;</noscript></p>
+<p>Md Jahidul Hamid <script type="text/javascript">
+<!--
+h='&#x79;&#x61;&#104;&#x6f;&#x6f;&#46;&#x63;&#x6f;&#x6d;';a='&#64;';n='&#106;&#x61;&#104;&#x69;&#100;&#x75;&#108;&#104;&#x61;&#x6d;&#x69;&#100;';e=n+a+h;
+document.write('<a h'+'ref'+'="ma'+'ilto'+':'+e+'" clas'+'s="em' + 'ail">'+e+'<\/'+'a'+'>');
+// -->
+</script><noscript>&#106;&#x61;&#104;&#x69;&#100;&#x75;&#108;&#104;&#x61;&#x6d;&#x69;&#100;&#32;&#x61;&#116;&#32;&#x79;&#x61;&#104;&#x6f;&#x6f;&#32;&#100;&#x6f;&#116;&#32;&#x63;&#x6f;&#x6d;</noscript></p>
+<h1 id="report-bugs-to">REPORT BUGS TO</h1>
+<p><a href="https://github.com/neurobin/shc/issues" class="uri">https://github.com/neurobin/shc/issues</a></p>
+</body>
+</html>
