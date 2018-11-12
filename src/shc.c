@@ -503,7 +503,7 @@ static const char * RTC[] = {
 static int parse_an_arg(int argc, char * argv[])
 {
 	extern char * optarg;
-	const char * opts = "e:m:f:i:x:l:o:rvDSUZCABh";
+	const char * opts = "e:m:f:i:x:l:o:rvDSUHCABh";
 	struct tm tmp[1];
 	time_t expdate;
 	int cnt, l;
