@@ -112,7 +112,7 @@ shc -Uf myscript -o mybinary
 Compile an untraceable binary that doesn't require root access (experimental):
 
 ```bash
-shc -Zf myscript -o mybinary
+shc -Hf myscript -o mybinary
 ```
  
 # BUGS
