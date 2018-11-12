@@ -71,7 +71,7 @@ You can use it if you wish to distribute your scripts but don't want them to be 
 : Make binary to be untraceable (using *strace*, *ptrace*, *truss*, etc.) 
 
 -Z
-: Extra security flag (untraceable, undumpable and root is not needed). May not work in all systems.
+: Extra security flag (untraceable, undumpable and root is not needed). May not work on all systems.
 
 -C
 : Display license and exit 
