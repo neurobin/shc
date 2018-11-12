@@ -84,6 +84,8 @@ static const char * help[] = {
 "    -S     Switch ON setuid for root callable programs [OFF]",
 "    -D     Switch ON debug exec calls [OFF]",
 "    -U     Make binary untraceable [no]",
+"    -Z     Extra security protection [no]",
+"           untraceable, undumpable and root is not needed",
 "    -C     Display license and exit",
 "    -A     Display abstract and exit",
 "    -B     Compile for busybox",
@@ -135,6 +137,9 @@ static int DEBUGEXEC_flag;
 static const char TRACEABLE_line[] =
 "#define TRACEABLE	%d	/* Define as 1 to enable ptrace the executable */\n";
 static int TRACEABLE_flag=1;
+static const char EXTRASEC_line[] =
+"#define EXTRASEC	%d	/* Define as 1 to enable ptrace/dump the executable */\n";
+static int EXTRASEC_flag=1;
 static const char BUSYBOXON_line[] =
 "#define BUSYBOXON	%d	/* Define as 1 to enable work with busybox */\n";
 static int BUSYBOXON_flag;
@@ -294,6 +299,44 @@ static const char * RTC[] = {
 "",
 "void chkenv_end(void){}",
 "",
+"#if !EXTRASEC",
+"",
+"#include <signal.h>",
+"#include <sys/prctl.h>",
+"#define PR_SET_PTRACER 0x59616d61",
+"",
+"static void gets_process_name(const pid_t pid, char * name) {",
+"	char procfile[BUFSIZ];",
+"	sprintf(procfile, \"/proc/%d/cmdline\", pid);",
+"	FILE* f = fopen(procfile, \"r\");",
+"	if (f) {",
+"		size_t size;",
+"		size = fread(name, sizeof (char), sizeof (procfile), f);",
+"		if (size > 0) {",
+"			if ('\\n' == name[size - 1])",
+"				name[size - 1] = '\\0';",
+"		}",
+"		fclose(f);",
+"	}",
+"}",
+"",
+"void extrasec() {",
+"    prctl(PR_SET_DUMPABLE, 0);",
+"    prctl(PR_SET_PTRACER, -1);",
+"",
+"    int pid = getppid();",
+"    char name[256] = {0};",
+"    gets_process_name(pid, name);",
+"",
+"    if (strcmp(name, \"/bin/bash\") != 0) {",
+"        printf(\"Operation not permitted\\n\");",
+"        //kill(getppid(), SIGKILL);",
+"        kill(getpid(), SIGKILL);",
+"    }",
+"}",
+"",
+"#endif /* !EXTRASEC */",
+"",
 "#if !TRACEABLE",
 "",
 "#define _LINUX_SOURCE_COMPAT",
@@ -441,6 +484,9 @@ static const char * RTC[] = {
 "#if DEBUGEXEC",
 "	debugexec(\"main\", argc, argv);",
 "#endif",
+"#if !EXTRASEC",
+"	extrasec();",
+"#endif",
 "#if !TRACEABLE",
 "	untraceable(argv[0]);",
 "#endif",
@@ -457,7 +503,7 @@ static const char * RTC[] = {
 static int parse_an_arg(int argc, char * argv[])
 {
 	extern char * optarg;
-	const char * opts = "e:m:f:i:x:l:o:rvDSUCABh";
+	const char * opts = "e:m:f:i:x:l:o:rvDSUZCABh";
 	struct tm tmp[1];
 	time_t expdate;
 	int cnt, l;
@@ -520,6 +566,9 @@ static int parse_an_arg(int argc, char * argv[])
 		break;
 	case 'U':
 		TRACEABLE_flag = 0;
+		break;
+	case 'Z':
+		EXTRASEC_flag = 0;
 		break;
 	case 'C':
 		fprintf(stderr, "%s %s, %s\n", my_name, version, subject);
@@ -972,6 +1021,7 @@ int write_C(char * file, char * argv[])
 	fprintf(o, SETUID_line, SETUID_flag);
 	fprintf(o, DEBUGEXEC_line, DEBUGEXEC_flag);
 	fprintf(o, TRACEABLE_line, TRACEABLE_flag);
+	fprintf(o, EXTRASEC_line, EXTRASEC_flag);
     fprintf(o, BUSYBOXON_line, BUSYBOXON_flag);
 	for (indx = 0; RTC[indx]; indx++)
 		fprintf(o, "%s\n", RTC[indx]);
