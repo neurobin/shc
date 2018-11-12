@@ -7,7 +7,7 @@
 shc - Generic shell script compiler
 
 # SYNOPSIS
-**shc** [ -e *date* ] [ -m *addr* ] [ -i *iopt* ] [ -x *cmnd* ] [ -l *lopt* ] [ -o *outfile* ] [ -ABCDhUZv ] -f *script* 
+**shc** [ -e *date* ] [ -m *addr* ] [ -i *iopt* ] [ -x *cmnd* ] [ -l *lopt* ] [ -o *outfile* ] [ -ABCDhUHv ] -f *script* 
 
 # DESCRIPTION
 **shc** creates a stripped binary executable version of the script specified with `-f` on the command line.
@@ -70,7 +70,7 @@ You can use it if you wish to distribute your scripts but don't want them to be 
 -U
 : Make binary to be untraceable (using *strace*, *ptrace*, *truss*, etc.) 
 
--Z
+-H
 : Extra security flag (untraceable, undumpable and root is not needed). May not work on all systems.
 
 -C

@@ -68,7 +68,7 @@ static const char * abstract[] = {
 0};
 
 static const char usage[] = 
-"Usage: shc [-e date] [-m addr] [-i iopt] [-x cmnd] [-l lopt] [-o outfile] [-rvDUZCABh] -f script";
+"Usage: shc [-e date] [-m addr] [-i iopt] [-x cmnd] [-l lopt] [-o outfile] [-rvDUHCABh] -f script";
 
 static const char * help[] = {
 "",
@@ -84,7 +84,7 @@ static const char * help[] = {
 "    -S     Switch ON setuid for root callable programs [OFF]",
 "    -D     Switch ON debug exec calls [OFF]",
 "    -U     Make binary untraceable [no]",
-"    -Z     Extra security protection [no]",
+"    -H     Hardening : extra security protection [no]",
 "           untraceable, undumpable and root is not needed",
 "    -C     Display license and exit",
 "    -A     Display abstract and exit",
@@ -137,9 +137,9 @@ static int DEBUGEXEC_flag;
 static const char TRACEABLE_line[] =
 "#define TRACEABLE	%d	/* Define as 1 to enable ptrace the executable */\n";
 static int TRACEABLE_flag=1;
-static const char EXTRASEC_line[] =
-"#define EXTRASEC	%d	/* Define as 1 to enable ptrace/dump the executable */\n";
-static int EXTRASEC_flag=1;
+static const char HARDENING_line[] =
+"#define HARDENING	%d	/* Define as 1 to enable ptrace/dump the executable */\n";
+static int HARDENING_flag=1;
 static const char BUSYBOXON_line[] =
 "#define BUSYBOXON	%d	/* Define as 1 to enable work with busybox */\n";
 static int BUSYBOXON_flag;
@@ -212,6 +212,124 @@ static const char * RTC[] = {
 "}",
 "",
 "/* End of ARC4 */",
+"",
+"#if !HARDENING",
+"",
+"#include <sys/ptrace.h>",
+"#include <sys/wait.h>",
+"#include <signal.h>",
+"#include <sys/prctl.h>",
+"#define PR_SET_PTRACER 0x59616d61",
+"",
+"/* Seccomp Sandboxing */",
+"#include <stdlib.h>",
+"#include <stdio.h>",
+"#include <stddef.h>",
+"#include <string.h>",
+"#include <unistd.h>",
+"#include <errno.h>",
+"",
+"#include <sys/types.h>",
+"#include <sys/prctl.h>",
+"#include <sys/syscall.h>",
+"#include <sys/socket.h>",
+"",
+"#include <linux/filter.h>",
+"#include <linux/seccomp.h>",
+"#include <linux/audit.h>",
+"",
+"#define ArchField offsetof(struct seccomp_data, arch)",
+"",
+"#define Allow(syscall) \\",
+"    BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, SYS_##syscall, 0, 1), \\",
+"    BPF_STMT(BPF_RET+BPF_K, SECCOMP_RET_ALLOW)",
+"",
+"struct sock_filter filter[] = {",
+"    /* validate arch */",
+"    BPF_STMT(BPF_LD+BPF_W+BPF_ABS, ArchField),",
+"    BPF_JUMP( BPF_JMP+BPF_JEQ+BPF_K, AUDIT_ARCH_X86_64, 1, 0),",
+"    BPF_STMT(BPF_RET+BPF_K, SECCOMP_RET_KILL),",
+"",
+"    /* load syscall */",
+"    BPF_STMT(BPF_LD+BPF_W+BPF_ABS, offsetof(struct seccomp_data, nr)),",
+"",
+"    /* list of allowed syscalls */",
+"    Allow(exit_group),  /* exits a processs */",
+"    Allow(brk),         /* for malloc(), inside libc */",
+"    Allow(mmap),        /* also for malloc() */",
+"    Allow(munmap),      /* for free(), inside libc */",
+"",
+"    /* and if we don't match above, die */",
+"    BPF_STMT(BPF_RET+BPF_K, SECCOMP_RET_KILL),",
+"};",
+"struct sock_fprog filterprog = {",
+"    .len = sizeof(filter)/sizeof(filter[0]),",
+"    .filter = filter",
+"};",
+"/* End Seccomp Sandboxing */",
+"void arc4_hardrun(void * str, int len) {",
+"    //Decode locally",
+"    char tmp2[len];",
+"    memcpy(tmp2, str, len);",
+"",
+"	unsigned char tmp, * ptr = (unsigned char *)tmp2;",
+"",
+"    int lentmp = len;",
+"    int pid, status;",
+"    pid = fork();",
+"",     
+"    if(pid==0) {",
+"",
+"        //Start tracing to protect from dump & trace",
+"        if (ptrace(PTRACE_TRACEME, 0, 0, 0) < 0) {",
+"            printf(\"Operation not permitted\\n\");",
+"            kill(getppid(), SIGKILL);",
+"            kill(getpid(), SIGKILL);",
+"            exit(0);",
+"        }",
+"",     
+"        //Decode Bash",
+"        while (len > 0) {",
+"            indx++;",
+"            tmp = stte[indx];",
+"            jndx += tmp;",
+"            stte[indx] = stte[jndx];",
+"            stte[jndx] = tmp;",
+"            tmp += stte[indx];",
+"            *ptr ^= stte[tmp];",
+"            ptr++;",
+"            len--;",
+"        }",
+"",
+"        //Exec bash script",
+"        system(tmp2);",
+"",
+"        //Empty script variable",
+"        memcpy(tmp2, str, lentmp);",
+"",
+"        //Sinal to detach ptrace",
+"        ptrace(PTRACE_DETACH, 0, 0, 0);",
+"        exit(0);",
+"    }",
+"    else {",
+"        wait(&status);",
+"    }",
+"",
+"    /* Seccomp Sandboxing - set up the restricted environment */",
+"    if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0)) {",
+"        perror(\"Could not start seccomp:\");",
+"        exit(1);",
+"    }",
+"    if (prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &filterprog) == -1) {",
+"        perror(\"Could not start seccomp:\");",
+"        exit(1);",
+"    }",
+"    /* End Seccomp Sandboxing */",
+"",
+"    //kill(getpid(), SIGKILL);",
+"    _exit(0);",
+"} ",
+"#endif /* !HARDENING */",
 "",
 "/*",
 " * Key with file invariants. ",
@@ -299,11 +417,7 @@ static const char * RTC[] = {
 "",
 "void chkenv_end(void){}",
 "",
-"#if !EXTRASEC",
-"",
-"#include <signal.h>",
-"#include <sys/prctl.h>",
-"#define PR_SET_PTRACER 0x59616d61",
+"#if !HARDENING",
 "",
 "static void gets_process_name(const pid_t pid, char * name) {",
 "	char procfile[BUFSIZ];",
@@ -320,7 +434,7 @@ static const char * RTC[] = {
 "	}",
 "}",
 "",
-"void extrasec() {",
+"void hardening() {",
 "    prctl(PR_SET_DUMPABLE, 0);",
 "    prctl(PR_SET_PTRACER, -1);",
 "",
@@ -335,7 +449,7 @@ static const char * RTC[] = {
 "    }",
 "}",
 "",
-"#endif /* !EXTRASEC */",
+"#endif /* !HARDENING */",
 "",
 "#if !TRACEABLE",
 "",
@@ -429,6 +543,10 @@ static const char * RTC[] = {
 "		if (!rlax[0] && key_with_file(shll))",
 "			return shll;",
 "		arc4(opts, opts_z);",
+"#if !HARDENING",
+"	    arc4_hardrun(text, text_z);",
+"	    exit(0);",
+"#endif",
 "		arc4(text, text_z);",
 "		arc4(tst2, tst2_z);",
 "		 key(tst2, tst2_z);",
@@ -484,8 +602,8 @@ static const char * RTC[] = {
 "#if DEBUGEXEC",
 "	debugexec(\"main\", argc, argv);",
 "#endif",
-"#if !EXTRASEC",
-"	extrasec();",
+"#if !HARDENING",
+"	hardening();",
 "#endif",
 "#if !TRACEABLE",
 "	untraceable(argv[0]);",
@@ -503,7 +621,7 @@ static const char * RTC[] = {
 static int parse_an_arg(int argc, char * argv[])
 {
 	extern char * optarg;
-	const char * opts = "e:m:f:i:x:l:o:rvDSUZCABh";
+	const char * opts = "e:m:f:i:x:l:o:rvDSUHCABh";
 	struct tm tmp[1];
 	time_t expdate;
 	int cnt, l;
@@ -567,8 +685,8 @@ static int parse_an_arg(int argc, char * argv[])
 	case 'U':
 		TRACEABLE_flag = 0;
 		break;
-	case 'Z':
-		EXTRASEC_flag = 0;
+	case 'H':
+		HARDENING_flag = 0;
 		break;
 	case 'C':
 		fprintf(stderr, "%s %s, %s\n", my_name, version, subject);
@@ -1022,7 +1140,7 @@ int write_C(char * file, char * argv[])
 	fprintf(o, SETUID_line, SETUID_flag);
 	fprintf(o, DEBUGEXEC_line, DEBUGEXEC_flag);
 	fprintf(o, TRACEABLE_line, TRACEABLE_flag);
-	fprintf(o, EXTRASEC_line, EXTRASEC_flag);
+	fprintf(o, HARDENING_line, HARDENING_flag);
     fprintf(o, BUSYBOXON_line, BUSYBOXON_flag);
 	for (indx = 0; RTC[indx]; indx++)
 		fprintf(o, "%s\n", RTC[indx]);
