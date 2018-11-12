@@ -3,6 +3,7 @@ CHANGES
 4.0.0 
 
 	* Add -Z option for extra security without root (Thanks to intika <https://github.com/intika>)
+	* dash support
 
 3.9.8 Sat Oct 20 17:49:28 UTC 2018
 
