@@ -84,7 +84,7 @@ static const char * help[] = {
 "    -S     Switch ON setuid for root callable programs [OFF]",
 "    -D     Switch ON debug exec calls [OFF]",
 "    -U     Make binary untraceable [no]",
-"    -Z     Extra security protection [no]",
+"    -H     Hardening : extra security protection [no]",
 "           untraceable, undumpable and root is not needed",
 "    -C     Display license and exit",
 "    -A     Display abstract and exit",
@@ -137,9 +137,9 @@ static int DEBUGEXEC_flag;
 static const char TRACEABLE_line[] =
 "#define TRACEABLE	%d	/* Define as 1 to enable ptrace the executable */\n";
 static int TRACEABLE_flag=1;
-static const char EXTRASEC_line[] =
-"#define EXTRASEC	%d	/* Define as 1 to enable ptrace/dump the executable */\n";
-static int EXTRASEC_flag=1;
+static const char HARDENING_line[] =
+"#define HARDENING	%d	/* Define as 1 to enable ptrace/dump the executable */\n";
+static int HARDENING_flag=1;
 static const char BUSYBOXON_line[] =
 "#define BUSYBOXON	%d	/* Define as 1 to enable work with busybox */\n";
 static int BUSYBOXON_flag;
@@ -299,7 +299,7 @@ static const char * RTC[] = {
 "",
 "void chkenv_end(void){}",
 "",
-"#if !EXTRASEC",
+"#if !HARDENING",
 "",
 "#include <signal.h>",
 "#include <sys/prctl.h>",
@@ -320,7 +320,7 @@ static const char * RTC[] = {
 "	}",
 "}",
 "",
-"void extrasec() {",
+"void hardening() {",
 "    prctl(PR_SET_DUMPABLE, 0);",
 "    prctl(PR_SET_PTRACER, -1);",
 "",
@@ -335,7 +335,7 @@ static const char * RTC[] = {
 "    }",
 "}",
 "",
-"#endif /* !EXTRASEC */",
+"#endif /* !HARDENING */",
 "",
 "#if !TRACEABLE",
 "",
@@ -484,8 +484,8 @@ static const char * RTC[] = {
 "#if DEBUGEXEC",
 "	debugexec(\"main\", argc, argv);",
 "#endif",
-"#if !EXTRASEC",
-"	extrasec();",
+"#if !HARDENING",
+"	hardening();",
 "#endif",
 "#if !TRACEABLE",
 "	untraceable(argv[0]);",
@@ -567,8 +567,8 @@ static int parse_an_arg(int argc, char * argv[])
 	case 'U':
 		TRACEABLE_flag = 0;
 		break;
-	case 'Z':
-		EXTRASEC_flag = 0;
+	case 'H':
+		HARDENING_flag = 0;
 		break;
 	case 'C':
 		fprintf(stderr, "%s %s, %s\n", my_name, version, subject);
@@ -1021,7 +1021,7 @@ int write_C(char * file, char * argv[])
 	fprintf(o, SETUID_line, SETUID_flag);
 	fprintf(o, DEBUGEXEC_line, DEBUGEXEC_flag);
 	fprintf(o, TRACEABLE_line, TRACEABLE_flag);
-	fprintf(o, EXTRASEC_line, EXTRASEC_flag);
+	fprintf(o, HARDENING_line, HARDENING_flag);
     fprintf(o, BUSYBOXON_line, BUSYBOXON_flag);
 	for (indx = 0; RTC[indx]; indx++)
 		fprintf(o, "%s\n", RTC[indx]);
@@ -1089,4 +1089,5 @@ int main(int argc, char * argv[])
 	exit(1);
 	return 1;
 }
+
 
