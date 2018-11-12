@@ -12,7 +12,8 @@ txtrst='\e[0m'    # Text Reset
 stat=0
 pc=0
 fc=0
-echo "Running tests ..."
+echo
+echo "== Running tests ..."
 for shell in ${shells[@]}; do
     tmpd=$(mktemp -d)
     tmpf="$tmpd/test.$(basename $shell)"
@@ -50,5 +51,7 @@ fi
 
 echo -e "$pt: $pc"
 echo -e "$ft: $fc"
+echo "------------"
+echo
 
 exit $stat
