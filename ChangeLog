@@ -1,5 +1,9 @@
 CHANGES
 
+4.0.0 
+
+	* Add -Z option for extra security without root
+
 3.9.8 Sat Oct 20 17:49:28 UTC 2018
 
 	* Add setuid option -S
