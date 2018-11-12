@@ -8,5 +8,6 @@ script:
   - ./autogen.sh
   - ./configure
   - make
-  - make check
+  - sudo make install
+  - test/ttest.sh
 
