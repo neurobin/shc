@@ -9,7 +9,7 @@ shc \- Generic shell script compiler
 .PP
 \f[B]shc\f[] [ \-e \f[I]date\f[] ] [ \-m \f[I]addr\f[] ] [ \-i
 \f[I]iopt\f[] ] [ \-x \f[I]cmnd\f[] ] [ \-l \f[I]lopt\f[] ] [ \-o
-\f[I]outfile\f[] ] [ \-ABCDhUZv ] \-f \f[I]script\f[]
+\f[I]outfile\f[] ] [ \-ABCDhUHv ] \-f \f[I]script\f[]
 .SH DESCRIPTION
 .PP
 \f[B]shc\f[] creates a stripped binary executable version of the script
@@ -118,7 +118,7 @@ Make binary to be untraceable (using \f[I]strace\f[], \f[I]ptrace\f[],
 .RS
 .RE
 .TP
-.B \-Z
+.B \-H
 Extra security flag (untraceable, undumpable and root is not needed).
 May not work on all systems.
 .RS

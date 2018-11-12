@@ -68,7 +68,7 @@ static const char * abstract[] = {
 0};
 
 static const char usage[] = 
-"Usage: shc [-e date] [-m addr] [-i iopt] [-x cmnd] [-l lopt] [-o outfile] [-rvDUZCABh] -f script";
+"Usage: shc [-e date] [-m addr] [-i iopt] [-x cmnd] [-l lopt] [-o outfile] [-rvDUHCABh] -f script";
 
 static const char * help[] = {
 "",
