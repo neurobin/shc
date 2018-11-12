@@ -22,7 +22,7 @@ for shell in ${shells[@]}; do
     " > "$tmpf"
     "$shc" -f "$tmpf" -o "$tmpd/a.out"
     out=$("$tmpd/a.out")
-    if [[ "$out" = *'Hello World'* ]]; then
+    if [[ "$out" = 'Hello World' ]]; then
         echo -e "$shell: ${txtgrn}PASSED${txtrst}"
         ((pc++))
     else
