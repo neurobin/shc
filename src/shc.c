@@ -17,7 +17,7 @@
  */
 
 static const char my_name[] = "shc";
-static const char version[] = "Version 3.9.8";
+static const char version[] = "Version 4.0.0";
 static const char subject[] = "Generic Shell Script Compiler";
 static const char cpright[] = "GNU GPL Version 3";
 static const struct { const char * f, * s, * e; }
@@ -68,7 +68,7 @@ static const char * abstract[] = {
 0};
 
 static const char usage[] = 
-"Usage: shc [-e date] [-m addr] [-i iopt] [-x cmnd] [-l lopt] [-o outfile] [-rvDUCABh] -f script";
+"Usage: shc [-e date] [-m addr] [-i iopt] [-x cmnd] [-l lopt] [-o outfile] [-rvDUZCABh] -f script";
 
 static const char * help[] = {
 "",
@@ -735,6 +735,7 @@ struct {
 	{ "perl", "-e", "--", "exec('%s',@ARGV);" },
 	{ "rc",   "-c", "",   "builtin exec %s $*" },
 	{ "sh",   "-c", "",   "exec '%s' \"$@\"" }, /* IRIX_nvi */
+	{ "dash", "-c", "",   "exec '%s' \"$@\"" },
 	{ "bash", "-c", "",   "exec '%s' \"$@\"" },
 	{ "zsh",  "-c", "",   "exec '%s' \"$@\"" },
 	{ "bsh",  "-c", "",   "exec '%s' \"$@\"" }, /* AIX_nvi */

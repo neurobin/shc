@@ -1,8 +1,13 @@
 CHANGES
 
+4.0.0 Mon Nov 12 16:54:56 UTC 2018
+
+	* Add -Z option for extra security without root (Thanks to intika <https://github.com/intika>)
+	* dash support
+
 3.9.8 Sat Oct 20 17:49:28 UTC 2018
 
-	* Add setuid option -S
+	* Add setuid option -S (Thanks to Boon Pang <https://github.com/wombat78>)
 
 3.9.7 Sat Oct 20 15:25:13 UTC 2018
 
@@ -18,7 +23,7 @@ CHANGES
 
 3.9.4   Sat May 13 18:46:05 UTC 2017
 
-    * Fix issue #23 (debian bug #861180)
+    * Fix issue #23 (debian bug #861180) (Thanks to original author Francisco Rosales <frosal@fi.upm.es>)
 
 3.9.3   Sat Jul 30 18:46:34 BDT 2016
 
