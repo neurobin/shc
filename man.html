@@ -104,7 +104,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <dd>Make binary to be untraceable (using <em>strace</em>, <em>ptrace</em>, <em>truss</em>, etc.)
 </dd>
 <dt>-H</dt>
-<dd>Extra security flag (untraceable, undumpable and root is not needed). May not work on all systems.
+<dd>Hardening. Extra security flag without root access requirement that protects against dumping, code injection, <code>cat /proc/pid/cmdline</code>, ptrace, etc.. This feature is <strong>experimental</strong> and may not work on all systems.
 </dd>
 <dt>-C</dt>
 <dd>Display license and exit
