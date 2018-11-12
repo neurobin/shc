@@ -328,7 +328,7 @@ static const char * RTC[] = {
 "    char name[256] = {0};",
 "    gets_process_name(pid, name);",
 "",
-"    if (strcmp(name, \"/bin/bash\") != 0) {",
+"    if ((strcmp(name, \"/bin/bash\") != 0) && (strcmp(name, \"bash\") != 0)) {,
 "        printf(\"Operation not permitted\\n\");",
 "        //kill(getppid(), SIGKILL);",
 "        kill(getpid(), SIGKILL);",
