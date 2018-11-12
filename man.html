@@ -5,7 +5,7 @@
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="pandoc" />
   <meta name="author" content="" />
-  <meta name="date" content="2018-10-21" />
+  <meta name="date" content="2018-11-12" />
   <title>shc(1) shc user manual</title>
   <style type="text/css">code{white-space: pre;}</style>
   <style type="text/css">
@@ -50,13 +50,13 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="header">
 <h1 class="title">shc(1) shc user manual</h1>
 <h2 class="author"></h2>
-<h3 class="date">October 21, 2018</h3>
+<h3 class="date">November 12, 2018</h3>
 </div>
 <hr>
 <h1 id="name">NAME</h1>
 <p>shc - Generic shell script compiler</p>
 <h1 id="synopsis">SYNOPSIS</h1>
-<p><strong>shc</strong> [ -e <em>date</em> ] [ -m <em>addr</em> ] [ -i <em>iopt</em> ] [ -x <em>cmnd</em> ] [ -l <em>lopt</em> ] [ -o <em>outfile</em> ] [ -ABCDhUv ] -f <em>script</em></p>
+<p><strong>shc</strong> [ -e <em>date</em> ] [ -m <em>addr</em> ] [ -i <em>iopt</em> ] [ -x <em>cmnd</em> ] [ -l <em>lopt</em> ] [ -o <em>outfile</em> ] [ -ABCDhUZv ] -f <em>script</em></p>
 <h1 id="description">DESCRIPTION</h1>
 <p><strong>shc</strong> creates a stripped binary executable version of the script specified with <code>-f</code> on the command line.</p>
 <p>The binary version will get a <code>.x</code> extension appended by default if <em>outfile</em> is not defined with [-o <em>outfile</em>] option and will usually be a bit larger in size than the original ascii code. Generated C source code is saved in a file with the extension <code>.x.c</code> or in a file specified with appropriate option.</p>
@@ -103,6 +103,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <dt>-U</dt>
 <dd>Make binary to be untraceable (using <em>strace</em>, <em>ptrace</em>, <em>truss</em>, etc.)
 </dd>
+<dt>-Z</dt>
+<dd>Extra security flag (untraceable, undumpable and root is not needed). May not work in all systems.
+</dd>
 <dt>-C</dt>
 <dd>Display license and exit
 </dd>
@@ -130,6 +133,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">shc</span> -f myscript -o mybinary</code></pre></div>
 <p>Compile an untraceable binary:</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">shc</span> -Uf myscript -o mybinary</code></pre></div>
+<p>Compile an untraceable binary that doesn't require root access (experimental):</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">shc</span> -Zf myscript -o mybinary</code></pre></div>
 <h1 id="bugs">BUGS</h1>
 <p>The maximum size of the script that could be executed once compiled is limited by the operating system configuration parameter <code>_SC_ARG_MAX</code> (see sysconf(2))</p>
 <h1 id="authors">AUTHORS</h1>

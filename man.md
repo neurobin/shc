@@ -1,13 +1,13 @@
 % shc(1) shc user manual
 %
-% October 21, 2018
+% November 12, 2018
 <hr>
 
 # NAME
 shc - Generic shell script compiler
 
 # SYNOPSIS
-**shc** [ -e *date* ] [ -m *addr* ] [ -i *iopt* ] [ -x *cmnd* ] [ -l *lopt* ] [ -o *outfile* ] [ -ABCDhUv ] -f *script* 
+**shc** [ -e *date* ] [ -m *addr* ] [ -i *iopt* ] [ -x *cmnd* ] [ -l *lopt* ] [ -o *outfile* ] [ -ABCDhUZv ] -f *script* 
 
 # DESCRIPTION
 **shc** creates a stripped binary executable version of the script specified with `-f` on the command line.
@@ -70,6 +70,9 @@ You can use it if you wish to distribute your scripts but don't want them to be 
 -U
 : Make binary to be untraceable (using *strace*, *ptrace*, *truss*, etc.) 
 
+-Z
+: Extra security flag (untraceable, undumpable and root is not needed). May not work in all systems.
+
 -C
 : Display license and exit 
 
@@ -106,6 +109,11 @@ Compile an untraceable binary:
 shc -Uf myscript -o mybinary
 ```
 
+Compile an untraceable binary that doesn't require root access (experimental):
+
+```bash
+shc -Zf myscript -o mybinary
+```
  
 # BUGS
 The maximum size of the script that could be executed once compiled is limited by the operating system configuration parameter `_SC_ARG_MAX` (see sysconf(2))
