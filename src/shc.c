@@ -141,11 +141,11 @@ static const char TRACEABLE_line[] =
 "#define TRACEABLE	%d	/* Define as 1 to enable ptrace the executable */\n";
 static int TRACEABLE_flag=1;
 static const char HARDENING_line[] =
-"#define HARDENING	%d	/* Define as 1 to enable ptrace/dump the executable */\n";
-static int HARDENING_flag=1;
+"#define HARDENING	%d	/* Define as 1 to disable ptrace/dump the executable */\n";
+static int HARDENING_flag=0;
 static const char HARDENINGSP_line[] =
-"#define HARDENINGSP	%d	/* Define as 1 to enable bash child process */\n";
-static int HARDENINGSP_flag=1;
+"#define HARDENINGSP	%d	/* Define as 1 to disable bash child process */\n";
+static int HARDENINGSP_flag=0;
 static const char BUSYBOXON_line[] =
 "#define BUSYBOXON	%d	/* Define as 1 to enable work with busybox */\n";
 static int BUSYBOXON_flag;
@@ -219,7 +219,7 @@ static const char * RTC[] = {
 "",
 "/* End of ARC4 */",
 "",
-"#if !HARDENING",
+"#if HARDENING",
 "",
 "#include <sys/ptrace.h>",
 "#include <sys/wait.h>",
@@ -295,7 +295,7 @@ static const char * RTC[] = {
 "",
 "    int lentmp = len;",
 "",
-"#if !HARDENINGSP",
+"#if HARDENINGSP",
 "    //Start tracing to protect from dump & trace",
 "    if (ptrace(PTRACE_TRACEME, 0, 0, 0) < 0) {",
 "        printf(\"Operation not permitted\\n\");",
@@ -330,7 +330,7 @@ static const char * RTC[] = {
 "    seccomp_hardening();",
 "",
 "    exit(0);",
-"#endif /* !HARDENINGSP Exit here anyway*/",
+"#endif /* HARDENINGSP Exit here anyway*/",
 "",
 "    int pid, status;",
 "    pid = fork();",
@@ -376,7 +376,7 @@ static const char * RTC[] = {
 "",
 "    exit(0);",
 "} ",
-"#endif /* !HARDENING */",
+"#endif /* HARDENING */",
 "",
 "/*",
 " * Key with file invariants. ",
@@ -464,7 +464,7 @@ static const char * RTC[] = {
 "",
 "void chkenv_end(void){}",
 "",
-"#if !HARDENING",
+"#if HARDENING",
 "",
 "static void gets_process_name(const pid_t pid, char * name) {",
 "	char procfile[BUFSIZ];",
@@ -510,7 +510,7 @@ static const char * RTC[] = {
 "    }",
 "}",
 "",
-"#endif /* !HARDENING */",
+"#endif /* HARDENING */",
 "",
 "#if !TRACEABLE",
 "",
@@ -604,7 +604,7 @@ static const char * RTC[] = {
 "		if (!rlax[0] && key_with_file(shll))",
 "			return shll;",
 "		arc4(opts, opts_z);",
-"#if !HARDENING",
+"#if HARDENING",
 "	    arc4_hardrun(text, text_z);",
 "	    exit(0);",
 "       /* Seccomp Sandboxing - Start */",
@@ -665,7 +665,7 @@ static const char * RTC[] = {
 "#if DEBUGEXEC",
 "	debugexec(\"main\", argc, argv);",
 "#endif",
-"#if !HARDENING",
+"#if HARDENING",
 "	hardening();",
 "#endif",
 "#if !TRACEABLE",
@@ -749,15 +749,10 @@ static int parse_an_arg(int argc, char * argv[])
 		TRACEABLE_flag = 0;
 		break;
 	case 'H':
-		HARDENING_flag = 0;
+		HARDENING_flag = 1;
 		break;
 	case 's':
-        if (HARDENING_flag == 1) {
-            fprintf(stderr, "\n%s '-s' feature is only available with '-H'\n",my_name);
-			return -1;
-        } else {
-            HARDENINGSP_flag = 0;
-        }
+        HARDENINGSP_flag = 1;
 		break;
 	case 'C':
 		fprintf(stderr, "%s %s, %s\n", my_name, version, subject);
@@ -825,6 +820,12 @@ static void parse_args(int argc, char * argv[])
 		if (ret == -1)
 			err++;
 	} while (ret);
+    
+    if (HARDENING_flag == 0 && HARDENINGSP_flag == 1) {
+        fprintf(stderr, "\n%s '-s' feature is only available with '-H'\n",my_name);
+        err++;
+    }
+    
 	if (err) {
 		fprintf(stderr, "\n%s %s\n\n", my_name, usage);
 		exit(1);

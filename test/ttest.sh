@@ -18,11 +18,12 @@ for shell in ${shells[@]}; do
     tmpd=$(mktemp -d)
     tmpf="$tmpd/test.$(basename $shell)"
     echo '#!'"$shell
-    echo 'Hello World'
+    echo 'Hello World fp:'\$1 sp:\$2
     " > "$tmpf"
     "$shc" -f "$tmpf" -o "$tmpd/a.out"
-    out=$("$tmpd/a.out")
-    if [[ "$out" = 'Hello World' ]]; then
+    out=$("$tmpd/a.out" first second)
+    #~ echo "  Output: $out"
+    if [[ "$out" = 'Hello World fp:first sp:second' ]]; then
         echo -e "$shell: ${txtgrn}PASSED${txtrst}"
         ((pc++))
     else
