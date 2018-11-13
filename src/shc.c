@@ -340,8 +340,8 @@ static const char * RTC[] = {
 "        //Start tracing to protect from dump & trace",
 "        if (ptrace(PTRACE_TRACEME, 0, 0, 0) < 0) {",
 "            printf(\"Operation not permitted\\n\");",
-"            kill(getpid(), SIGKILL);",
 "            kill(getppid(), SIGKILL);",
+"            kill(getpid(), SIGKILL);",
 "            _exit(1);",
 "        }",
 "",     
@@ -1291,5 +1291,3 @@ int main(int argc, char * argv[])
 	exit(1);
 	return 1;
 }
-
-
