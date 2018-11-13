@@ -2,101 +2,104 @@
 	shc Version 4.0.0, Generic Shell Script Compiler
 	GNU GPL Version 3 Md Jahidul Hamid <jahidulhamid@yahoo.com>
 
-	shc -Hf test.bash 
+	shc -f test.bash 
 #endif
 
 static  char data [] = 
-#define      text_z	145
-#define      text	((&data[1]))
-	"\026\134\050\156\047\242\314\031\330\322\151\110\303\164\145\163"
-	"\250\131\355\225\351\241\163\253\057\316\370\045\205\170\047\054"
-	"\102\225\153\324\355\207\075\275\036\051\325\353\362\363\067\324"
-	"\166\115\067\173\106\150\266\131\174\003\156\325\055\113\244\265"
-	"\267\106\360\117\231\050\130\213\120\143\273\143\226\060\343\072"
-	"\311\137\061\253\361\367\215\373\261\307\154\101\025\051\275\076"
-	"\143\266\204\351\314\063\375\126\347\052\160\033\116\254\321\355"
-	"\302\146\050\243\153\234\017\360\052\357\314\144\203\237\167\354"
-	"\102\217\061\316\120\115\222\005\273\227\224\317\233\125\177\325"
-	"\260\066\330\102"
-#define      opts_z	1
-#define      opts	((&data[148]))
-	"\127"
-#define      date_z	1
-#define      date	((&data[149]))
-	"\164"
-#define      chk1_z	22
-#define      chk1	((&data[153]))
-	"\063\322\174\007\306\123\341\242\154\005\302\055\105\022\072\172"
-	"\116\112\145\210\346\100\161\160\116\132\064"
-#define      xecc_z	15
-#define      xecc	((&data[179]))
-	"\061\052\117\353\304\047\342\201\005\025\341\350\053\327\221\032"
-	"\201\320\272\325"
-#define      tst2_z	19
-#define      tst2	((&data[198]))
-	"\253\276\262\205\160\217\021\260\227\234\210\266\231\063\074\122"
-	"\256\012\136\062\124\015\301\055"
-#define      inlo_z	3
-#define      inlo	((&data[221]))
-	"\210\343\160"
-#define      rlax_z	1
-#define      rlax	((&data[224]))
-	"\107"
-#define      lsto_z	1
-#define      lsto	((&data[225]))
-	"\132"
-#define      chk2_z	19
-#define      chk2	((&data[228]))
-	"\105\331\003\176\255\006\321\003\206\334\264\276\045\024\013\103"
-	"\255\306\315\243\036\054\247\156\000"
-#define      pswd_z	256
-#define      pswd	((&data[289]))
-	"\222\156\254\336\154\130\063\171\032\140\311\243\074\203\125\313"
-	"\363\241\360\274\040\350\001\372\024\250\150\025\200\001\347\023"
-	"\160\224\361\334\354\045\330\002\055\324\011\150\150\154\267\042"
-	"\275\216\361\310\117\277\141\011\221\360\355\222\034\334\156\071"
-	"\102\351\175\316\204\126\320\262\053\332\032\223\107\322\265\004"
-	"\141\246\314\261\146\056\272\370\037\250\212\073\205\371\164\307"
-	"\342\362\226\147\110\147\031\163\101\063\006\210\006\274\215\147"
-	"\143\132\030\312\210\323\302\250\173\115\343\001\107\130\310\051"
-	"\112\137\220\222\306\251\006\010\335\014\220\344\311\036\113\054"
-	"\170\144\366\001\070\271\251\264\007\214\265\116\345\176\167\057"
-	"\335\010\302\243\261\310\253\217\325\074\163\237\132\277\313\323"
-	"\044\302\324\134\174\175\020\203\012\306\321\357\104\111\036\041"
-	"\121\341\304\003\251\160\223\177\254\007\036\007\306\352\332\353"
-	"\255\256\110\051\053\130\255\066\036\176\045\143\310\104\204\032"
-	"\046\111\035\317\271\261\117\146\270\156\155\177\130\110\152\005"
-	"\366\262\057\042\013\334\130\052\133\176\215\044\303\022\076\351"
-	"\133\134\271\025\015\010\173\306\167\351\105\317\061\260\325\050"
-	"\143\005\112\157\341\243\231\075\042\047\141\346\072\240\317\225"
-	"\374\210\253\012\221\047\126\007\205\037\252\301\242\000\215\225"
-	"\241\176\121\302\146\122\274\173\373\044\220\173\046\167\216\226"
-	"\013\200\163\370\245\311\377\053\350\252\355\213\252\173\041\114"
-	"\371\163\016\137\306\312\332\301\357\153\074"
 #define      msg1_z	65
-#define      msg1	((&data[613]))
-	"\254\356\114\037\346\362\351\346\035\321\220\012\135\072\206\333"
-	"\104\110\377\360\027\162\063\064\160\166\143\156\344\306\134\054"
-	"\276\374\161\363\166\151\005\103\350\237\124\163\203\070\364\150"
-	"\301\257\042\304\017\111\010\013\235\214\354\333\311\054\137\137"
-	"\364\166\002\124\307\243\066\141\020\110\303\160\020\137\257\265"
-	"\176\206\177\361\225\337\267\140\272\170\120\045\265"
-#define      tst1_z	22
-#define      tst1	((&data[691]))
-	"\021\004\341\233\157\314\124\320\145\265\015\272\055\377\040\255"
-	"\376\152\223\226\014\351\023\366\314"
-#define      shll_z	10
-#define      shll	((&data[718]))
-	"\034\303\064\257\130\056\332\036\032\155\357\267\334\355"
+#define      msg1	((&data[12]))
+	"\241\212\073\067\002\156\311\377\301\014\116\153\146\275\203\227"
+	"\245\311\110\233\012\006\070\343\200\246\227\003\111\356\254\113"
+	"\316\233\004\137\164\274\300\176\371\165\275\213\262\120\323\113"
+	"\032\032\105\102\245\312\276\272\236\061\370\260\277\010\344\304"
+	"\213\026\025\353\203\344\255\104\213\220\116\256\101\065\351\005"
+	"\211\166\376"
+#define      opts_z	1
+#define      opts	((&data[83]))
+	"\247"
+#define      xecc_z	15
+#define      xecc	((&data[87]))
+	"\125\247\353\343\336\221\014\220\022\264\201\176\041\276\034\370"
+	"\337\102\053\273"
 #define      msg2_z	19
-#define      msg2	((&data[734]))
-	"\215\155\311\024\234\230\122\115\255\120\144\026\172\250\361\321"
-	"\153\246\227\023\165\053\341\354"/* End of data[] */;
+#define      msg2	((&data[106]))
+	"\060\310\267\116\374\240\300\132\270\165\276\062\235\047\120\137"
+	"\304\356\114\031\336\224"
+#define      date_z	1
+#define      date	((&data[126]))
+	"\343"
+#define      shll_z	10
+#define      shll	((&data[129]))
+	"\200\144\366\243\223\322\150\150\247\240\302\330\240"
+#define      lsto_z	1
+#define      lsto	((&data[140]))
+	"\060"
+#define      tst2_z	19
+#define      tst2	((&data[143]))
+	"\204\363\131\076\153\001\307\355\004\016\301\273\226\300\014\225"
+	"\051\356\144\377\234\115\105\166\242"
+#define      chk2_z	19
+#define      chk2	((&data[167]))
+	"\250\343\377\371\017\336\137\025\067\155\236\162\222\162\367\242"
+	"\164\137\136\317\010\132\005\070"
+#define      inlo_z	3
+#define      inlo	((&data[190]))
+	"\171\213\174"
+#define      tst1_z	22
+#define      tst1	((&data[198]))
+	"\124\143\035\270\004\330\213\352\156\103\305\213\036\153\022\042"
+	"\336\060\260\352\311\371\300\152\206\364\056\207\042\056"
+#define      chk1_z	22
+#define      chk1	((&data[226]))
+	"\354\177\155\313\373\206\246\141\344\034\214\335\260\357\055\271"
+	"\126\151\202\065\320\030\110\314\115"
+#define      rlax_z	1
+#define      rlax	((&data[248]))
+	"\271"
+#define      text_z	145
+#define      text	((&data[261]))
+	"\307\140\071\315\230\134\150\003\267\141\237\013\216\115\200\024"
+	"\153\310\314\101\174\124\051\210\064\032\007\244\177\021\340\075"
+	"\321\227\055\114\232\257\304\345\033\334\155\104\246\077\330\172"
+	"\006\374\224\334\324\340\173\030\075\031\160\332\234\112\303\011"
+	"\062\214\121\274\225\046\176\104\356\156\326\177\203\162\174\212"
+	"\222\072\177\047\013\140\126\232\176\125\247\322\044\075\076\077"
+	"\241\201\155\364\210\055\174\231\325\030\014\165\027\170\310\104"
+	"\210\007\215\132\150\331\026\331\016\355\103\214\003\235\256\217"
+	"\060\060\012\114\064\175\272\100\374\320\176\304\132\150\101\220"
+	"\022\102\220\106\112\147\246\203\353\326\127\203\007\305\275\304"
+	"\311\104\346\367\254\162\030\230\362\206\312\350\226\350\100\164"
+	"\260\240\256\175\071\012\345\074\302\106\334\316\013"
+#define      pswd_z	256
+#define      pswd	((&data[475]))
+	"\336\171\314\212\354\344\043\336\152\355\306\001\326\007\166\206"
+	"\247\044\004\340\056\351\035\361\060\371\277\074\223\122\021\161"
+	"\313\336\374\270\303\167\360\361\205\260\137\002\136\170\164\347"
+	"\232\175\115\340\251\065\135\212\253\217\127\114\100\372\307\342"
+	"\212\132\265\034\322\245\015\127\126\154\131\265\345\316\235\200"
+	"\113\352\141\365\037\276\177\312\115\327\027\216\321\336\160\134"
+	"\071\045\170\013\313\206\143\042\363\274\330\330\212\165\131\326"
+	"\140\272\314\177\170\113\112\306\042\141\124\364\100\304\120\172"
+	"\352\311\206\266\117\351\331\102\245\261\033\060\047\165\007\207"
+	"\060\323\007\251\037\121\157\102\263\303\066\364\210\207\156\163"
+	"\121\364\051\241\336\002\344\204\264\000\265\334\165\274\143\246"
+	"\220\152\117\260\274\277\362\157\202\051\144\013\261\322\176\003"
+	"\307\250\244\245\253\210\051\137\211\336\073\377\233\237\245\053"
+	"\012\365\333\306\264\316\066\067\367\232\102\251\155\300\254\064"
+	"\151\120\331\024\331\003\163\142\342\257\141\175\116\007\250\131"
+	"\374\204\037\260\122\126\347\112\361\051\363\136\352\237\222\123"
+	"\360\154\150\311\160\333\054\122\213\216\317\332\225\170\063\221"
+	"\374\123\102\117\251\051\232\232\123\215\370\076\055\213\222\035"
+	"\370\372\346\150\326\037\226\056\015\135\057\343\144\245\152\014"
+	"\311\156\355\370\130\012\352\211\003\252\306\227\374\330\010\310"
+	"\266\005\200\172\045\026\250\062\164\327\026\330\175\200\345\107"
+	"\357\322\100\110\334\052\321\340\324\230\167"/* End of data[] */;
 #define      hide_z	4096
 #define SETUID 0	/* Define as 1 to call setuid(0) at start of script */
 #define DEBUGEXEC	0	/* Define as 1 to debug execvp calls */
 #define TRACEABLE	1	/* Define as 1 to enable ptrace the executable */
-#define HARDENING	0	/* Define as 1 to enable ptrace/dump the executable */
+#define HARDENING	0	/* Define as 1 to disable ptrace/dump the executable */
+#define HARDENINGSP	0	/* Define as 1 to disable bash child process */
 #define BUSYBOXON	0	/* Define as 1 to enable work with busybox */
 
 /* rtc.c */
@@ -166,7 +169,7 @@ void arc4(void * str, int len)
 
 /* End of ARC4 */
 
-#if !HARDENING
+#if HARDENING
 
 #include <sys/ptrace.h>
 #include <sys/wait.h>
@@ -174,7 +177,7 @@ void arc4(void * str, int len)
 #include <sys/prctl.h>
 #define PR_SET_PTRACER 0x59616d61
 
-/* Seccomp Sandboxing */
+/* Seccomp Sandboxing Init */
 #include <stdlib.h>
 #include <stdio.h>
 #include <stddef.h>
@@ -219,7 +222,20 @@ struct sock_fprog filterprog = {
     .len = sizeof(filter)/sizeof(filter[0]),
     .filter = filter
 };
-/* End Seccomp Sandboxing */
+
+/* Seccomp Sandboxing - Set up the restricted environment */
+void seccomp_hardening() {
+    if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0)) {
+        perror("Could not start seccomp:");
+        exit(1);
+    }
+    if (prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &filterprog) == -1) {
+        perror("Could not start seccomp:");
+        exit(1);
+    }
+} 
+/* End Seccomp Sandboxing Init */
+
 void arc4_hardrun(void * str, int len) {
     //Decode locally
     char tmp2[len];
@@ -228,6 +244,44 @@ void arc4_hardrun(void * str, int len) {
 	unsigned char tmp, * ptr = (unsigned char *)tmp2;
 
     int lentmp = len;
+
+#if HARDENINGSP
+    //Start tracing to protect from dump & trace
+    if (ptrace(PTRACE_TRACEME, 0, 0, 0) < 0) {
+        printf("Operation not permitted\n");
+        kill(getpid(), SIGKILL);
+        exit(1);
+    }
+
+    //Decode Bash
+    while (len > 0) {
+        indx++;
+        tmp = stte[indx];
+        jndx += tmp;
+        stte[indx] = stte[jndx];
+        stte[jndx] = tmp;
+        tmp += stte[indx];
+        *ptr ^= stte[tmp];
+        ptr++;
+        len--;
+    }
+
+    //Exec bash script
+    system(tmp2);
+
+    //Empty script variable
+    memcpy(tmp2, str, lentmp);
+
+    //Sinal to detach ptrace
+    ptrace(PTRACE_DETACH, 0, 0, 0);
+    exit(0);
+
+    /* Seccomp Sandboxing - Start */
+    seccomp_hardening();
+
+    exit(0);
+#endif /* HARDENINGSP Exit here anyway*/
+
     int pid, status;
     pid = fork();
 
@@ -236,9 +290,8 @@ void arc4_hardrun(void * str, int len) {
         //Start tracing to protect from dump & trace
         if (ptrace(PTRACE_TRACEME, 0, 0, 0) < 0) {
             printf("Operation not permitted\n");
-            kill(getppid(), SIGKILL);
             kill(getpid(), SIGKILL);
-            exit(0);
+            _exit(1);
         }
 
         //Decode Bash
@@ -268,21 +321,12 @@ void arc4_hardrun(void * str, int len) {
         wait(&status);
     }
 
-    /* Seccomp Sandboxing - set up the restricted environment */
-    if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0)) {
-        perror("Could not start seccomp:");
-        exit(1);
-    }
-    if (prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &filterprog) == -1) {
-        perror("Could not start seccomp:");
-        exit(1);
-    }
-    /* End Seccomp Sandboxing */
+    /* Seccomp Sandboxing - Start */
+    seccomp_hardening();
 
-    //kill(getpid(), SIGKILL);
-    _exit(0);
+    exit(0);
 } 
-#endif /* !HARDENING */
+#endif /* HARDENING */
 
 /*
  * Key with file invariants. 
@@ -370,7 +414,7 @@ int chkenv(int argc)
 
 void chkenv_end(void){}
 
-#if !HARDENING
+#if HARDENING
 
 static void gets_process_name(const pid_t pid, char * name) {
 	char procfile[BUFSIZ];
@@ -395,14 +439,28 @@ void hardening() {
     char name[256] = {0};
     gets_process_name(pid, name);
 
-    if ((strcmp(name, "/bin/bash") != 0) && (strcmp(name, "bash") != 0) && (strcmp(name, "/bin/sh") != 0) && (strcmp(name, "sh") != 0)) {
+    if (   (strcmp(name, "bash") != 0) 
+        && (strcmp(name, "/bin/bash") != 0) 
+        && (strcmp(name, "sh") != 0) 
+        && (strcmp(name, "/bin/sh") != 0) 
+        && (strcmp(name, "sudo") != 0) 
+        && (strcmp(name, "/bin/sudo") != 0) 
+        && (strcmp(name, "/usr/bin/sudo") != 0)
+        && (strcmp(name, "gksudo") != 0) 
+        && (strcmp(name, "/bin/gksudo") != 0) 
+        && (strcmp(name, "/usr/bin/gksudo") != 0) 
+        && (strcmp(name, "kdesu") != 0) 
+        && (strcmp(name, "/bin/kdesu") != 0) 
+        && (strcmp(name, "/usr/bin/kdesu") != 0) 
+       )
+    {
         printf("Operation not permitted\n");
-        //kill(getppid(), SIGKILL);
         kill(getpid(), SIGKILL);
+        exit(1);
     }
 }
 
-#endif /* !HARDENING */
+#endif /* HARDENING */
 
 #if !TRACEABLE
 
@@ -422,6 +480,7 @@ void hardening() {
        #define PT_ATTACHEXC PTRACE_ATTACH
    #endif
 #endif
+
 void untraceable(char * argv0)
 {
 	char proc[80];
@@ -494,9 +553,11 @@ char * xsh(int argc, char ** argv)
 		if (!rlax[0] && key_with_file(shll))
 			return shll;
 		arc4(opts, opts_z);
-#if !HARDENING
+#if HARDENING
 	    arc4_hardrun(text, text_z);
 	    exit(0);
+       /* Seccomp Sandboxing - Start */
+       seccomp_hardening();
 #endif
 		arc4(text, text_z);
 		arc4(tst2, tst2_z);
@@ -553,7 +614,7 @@ int main(int argc, char ** argv)
 #if DEBUGEXEC
 	debugexec("main", argc, argv);
 #endif
-#if !HARDENING
+#if HARDENING
 	hardening();
 #endif
 #if !TRACEABLE
