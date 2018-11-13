@@ -3,6 +3,7 @@ CHANGES
 4.0.0 Mon Nov 12 16:54:56 UTC 2018
 
 	* Add -H option for extra security without root (Thanks to intika <https://github.com/intika>). It protects against dumping, code injection, `cat /proc/pid/cmdline`, ptrace, etc..
+    * Add -s option to force single process for hardening features (requires -H) <https://github.com/intika>.  
 	* dash support
 
 3.9.8 Sat Oct 20 17:49:28 UTC 2018

@@ -68,7 +68,7 @@ static const char * abstract[] = {
 0};
 
 static const char usage[] = 
-"Usage: shc [-e date] [-m addr] [-i iopt] [-x cmnd] [-l lopt] [-o outfile] [-rvDUHCABh] -f script";
+"Usage: shc [-e date] [-m addr] [-i iopt] [-x cmnd] [-l lopt] [-o outfile] [-rvDSUHCABhs] -f script";
 
 static const char * help[] = {
 "",
@@ -85,7 +85,10 @@ static const char * help[] = {
 "    -D     Switch ON debug exec calls [OFF]",
 "    -U     Make binary untraceable [no]",
 "    -H     Hardening : extra security protection [no]",
-"           untraceable, undumpable and root is not needed",
+"           untraceable, undumpable, etc. and root is not required",
+"    -s     Hardening : use a single process (no child) [no]",
+"           option available only with -H otherwise its ignored",
+"           experimental feature may hang...",
 "    -C     Display license and exit",
 "    -A     Display abstract and exit",
 "    -B     Compile for busybox",
@@ -140,6 +143,9 @@ static int TRACEABLE_flag=1;
 static const char HARDENING_line[] =
 "#define HARDENING	%d	/* Define as 1 to enable ptrace/dump the executable */\n";
 static int HARDENING_flag=1;
+static const char HARDENINGSP_line[] =
+"#define HARDENINGSP	%d	/* Define as 1 to enable bash child process */\n";
+static int HARDENINGSP_flag=1;
 static const char BUSYBOXON_line[] =
 "#define BUSYBOXON	%d	/* Define as 1 to enable work with busybox */\n";
 static int BUSYBOXON_flag;
@@ -221,7 +227,7 @@ static const char * RTC[] = {
 "#include <sys/prctl.h>",
 "#define PR_SET_PTRACER 0x59616d61",
 "",
-"/* Seccomp Sandboxing */",
+"/* Seccomp Sandboxing Init */",
 "#include <stdlib.h>",
 "#include <stdio.h>",
 "#include <stddef.h>",
@@ -266,7 +272,20 @@ static const char * RTC[] = {
 "    .len = sizeof(filter)/sizeof(filter[0]),",
 "    .filter = filter",
 "};",
-"/* End Seccomp Sandboxing */",
+"",
+"/* Seccomp Sandboxing - Set up the restricted environment */",
+"void seccomp_hardening() {",
+"    if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0)) {",
+"        perror(\"Could not start seccomp:\");",
+"        exit(1);",
+"    }",
+"    if (prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &filterprog) == -1) {",
+"        perror(\"Could not start seccomp:\");",
+"        exit(1);",
+"    }",
+"} ",
+"/* End Seccomp Sandboxing Init */",
+"",
 "void arc4_hardrun(void * str, int len) {",
 "    //Decode locally",
 "    char tmp2[len];",
@@ -275,6 +294,44 @@ static const char * RTC[] = {
 "	unsigned char tmp, * ptr = (unsigned char *)tmp2;",
 "",
 "    int lentmp = len;",
+"",
+"#if !HARDENINGSP",
+"    //Start tracing to protect from dump & trace",
+"    if (ptrace(PTRACE_TRACEME, 0, 0, 0) < 0) {",
+"        printf(\"Operation not permitted\\n\");",
+"        kill(getpid(), SIGKILL);",
+"        exit(1);",
+"    }",
+"",     
+"    //Decode Bash",
+"    while (len > 0) {",
+"        indx++;",
+"        tmp = stte[indx];",
+"        jndx += tmp;",
+"        stte[indx] = stte[jndx];",
+"        stte[jndx] = tmp;",
+"        tmp += stte[indx];",
+"        *ptr ^= stte[tmp];",
+"        ptr++;",
+"        len--;",
+"    }",
+"",
+"    //Exec bash script",
+"    system(tmp2);",
+"",
+"    //Empty script variable",
+"    memcpy(tmp2, str, lentmp);",
+"",
+"    //Sinal to detach ptrace",
+"    ptrace(PTRACE_DETACH, 0, 0, 0);",
+"    exit(0);",
+"",
+"    /* Seccomp Sandboxing - Start */",
+"    seccomp_hardening();",
+"",
+"    exit(0);",
+"#endif /* !HARDENINGSP Exit here anyway*/",
+"",
 "    int pid, status;",
 "    pid = fork();",
 "",     
@@ -283,9 +340,8 @@ static const char * RTC[] = {
 "        //Start tracing to protect from dump & trace",
 "        if (ptrace(PTRACE_TRACEME, 0, 0, 0) < 0) {",
 "            printf(\"Operation not permitted\\n\");",
-"            kill(getppid(), SIGKILL);",
 "            kill(getpid(), SIGKILL);",
-"            exit(0);",
+"            _exit(1);",
 "        }",
 "",     
 "        //Decode Bash",
@@ -315,19 +371,10 @@ static const char * RTC[] = {
 "        wait(&status);",
 "    }",
 "",
-"    /* Seccomp Sandboxing - set up the restricted environment */",
-"    if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0)) {",
-"        perror(\"Could not start seccomp:\");",
-"        exit(1);",
-"    }",
-"    if (prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &filterprog) == -1) {",
-"        perror(\"Could not start seccomp:\");",
-"        exit(1);",
-"    }",
-"    /* End Seccomp Sandboxing */",
+"    /* Seccomp Sandboxing - Start */",
+"    seccomp_hardening();",
 "",
-"    //kill(getpid(), SIGKILL);",
-"    _exit(0);",
+"    exit(0);",
 "} ",
 "#endif /* !HARDENING */",
 "",
@@ -442,10 +489,24 @@ static const char * RTC[] = {
 "    char name[256] = {0};",
 "    gets_process_name(pid, name);",
 "",
-"    if ((strcmp(name, \"/bin/bash\") != 0) && (strcmp(name, \"bash\") != 0) && (strcmp(name, \"/bin/sh\") != 0) && (strcmp(name, \"sh\") != 0)) {",
+"    if (   (strcmp(name, \"bash\") != 0) ",
+"        && (strcmp(name, \"/bin/bash\") != 0) ",
+"        && (strcmp(name, \"sh\") != 0) ",
+"        && (strcmp(name, \"/bin/sh\") != 0) ",
+"        && (strcmp(name, \"sudo\") != 0) ",
+"        && (strcmp(name, \"/bin/sudo\") != 0) ",
+"        && (strcmp(name, \"/usr/bin/sudo\") != 0)",
+"        && (strcmp(name, \"gksudo\") != 0) ",
+"        && (strcmp(name, \"/bin/gksudo\") != 0) ",
+"        && (strcmp(name, \"/usr/bin/gksudo\") != 0) ",
+"        && (strcmp(name, \"kdesu\") != 0) ",
+"        && (strcmp(name, \"/bin/kdesu\") != 0) ",
+"        && (strcmp(name, \"/usr/bin/kdesu\") != 0) ",
+"       )",
+"    {",
 "        printf(\"Operation not permitted\\n\");",
-"        //kill(getppid(), SIGKILL);",
 "        kill(getpid(), SIGKILL);",
+"        exit(1);",
 "    }",
 "}",
 "",
@@ -469,7 +530,7 @@ static const char * RTC[] = {
 "       #define PT_ATTACHEXC PTRACE_ATTACH",
 "   #endif",
 "#endif",
-
+"",
 "void untraceable(char * argv0)",
 "{",
 "	char proc[80];",
@@ -546,6 +607,8 @@ static const char * RTC[] = {
 "#if !HARDENING",
 "	    arc4_hardrun(text, text_z);",
 "	    exit(0);",
+"       /* Seccomp Sandboxing - Start */",
+"       seccomp_hardening();",
 "#endif",
 "		arc4(text, text_z);",
 "		arc4(tst2, tst2_z);",
@@ -621,7 +684,7 @@ static const char * RTC[] = {
 static int parse_an_arg(int argc, char * argv[])
 {
 	extern char * optarg;
-	const char * opts = "e:m:f:i:x:l:o:rvDSUHCABh";
+	const char * opts = "e:m:f:i:x:l:o:rvDSUHCABhs";
 	struct tm tmp[1];
 	time_t expdate;
 	int cnt, l;
@@ -687,6 +750,14 @@ static int parse_an_arg(int argc, char * argv[])
 		break;
 	case 'H':
 		HARDENING_flag = 0;
+		break;
+	case 's':
+        if (HARDENING_flag == 1) {
+            fprintf(stderr, "\n%s '-s' feature is only available with '-H'\n",my_name);
+			return -1;
+        } else {
+            HARDENINGSP_flag = 0;
+        }
 		break;
 	case 'C':
 		fprintf(stderr, "%s %s, %s\n", my_name, version, subject);
@@ -1141,6 +1212,7 @@ int write_C(char * file, char * argv[])
 	fprintf(o, DEBUGEXEC_line, DEBUGEXEC_flag);
 	fprintf(o, TRACEABLE_line, TRACEABLE_flag);
 	fprintf(o, HARDENING_line, HARDENING_flag);
+	fprintf(o, HARDENINGSP_line, HARDENINGSP_flag);
     fprintf(o, BUSYBOXON_line, BUSYBOXON_flag);
 	for (indx = 0; RTC[indx]; indx++)
 		fprintf(o, "%s\n", RTC[indx]);
