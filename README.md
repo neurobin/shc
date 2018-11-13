@@ -35,7 +35,8 @@ If the above installation method seems like too much work, then just download a 
 shc [options]
 shc -f script.sh -o binary
 shc -U -f script.sh -o binary # Untraceable binary (prevent strace, ptrace etc..)
-shc -H -f script.sh -o binary # Untraceable binary without root
+shc -H -f script.sh -o binary # Untraceable binary, does not require root
+shc -H -s -f script.sh -o binary # Untraceable binary running in a singe process, does not require root
 ```
 
 ## Testing
