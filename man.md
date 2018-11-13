@@ -1,13 +1,13 @@
 % shc(1) shc user manual
 %
-% November 12, 2018
+% November 13, 2018
 <hr>
 
 # NAME
 shc - Generic shell script compiler
 
 # SYNOPSIS
-**shc** [ -e *date* ] [ -m *addr* ] [ -i *iopt* ] [ -x *cmnd* ] [ -l *lopt* ] [ -o *outfile* ] [ -ABCDhUHv ] -f *script* 
+**shc** [ -e *date* ] [ -m *addr* ] [ -i *iopt* ] [ -x *cmnd* ] [ -l *lopt* ] [ -o *outfile* ] [ -ABCDhUHsvSr ] -f *script* 
 
 # DESCRIPTION
 **shc** creates a stripped binary executable version of the script specified with `-f` on the command line.
@@ -72,6 +72,9 @@ You can use it if you wish to distribute your scripts but don't want them to be 
 
 -H
 : Hardening. Extra security flag without root access requirement that protects against dumping, code injection, `cat /proc/pid/cmdline`, ptrace, etc.. This feature is **experimental** and may not work on all systems.
+
+-s
+: Hardening with single process. Requires -H option, runs the binary in a single process, shell is called in the main process otherwise its called in a child process. This feature is **experimental** (may hang) and may not work on all systems.
 
 -C
 : Display license and exit 
