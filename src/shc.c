@@ -133,22 +133,22 @@ static char * text;
 static int verbose;
 static const char SETUID_line[] =
 "#define SETUID %d	/* Define as 1 to call setuid(0) at start of script */\n";
-static int SETUID_flag;
+static int SETUID_flag = 0;
 static const char DEBUGEXEC_line[] =
 "#define DEBUGEXEC	%d	/* Define as 1 to debug execvp calls */\n";
-static int DEBUGEXEC_flag;
+static int DEBUGEXEC_flag = 0;
 static const char TRACEABLE_line[] =
 "#define TRACEABLE	%d	/* Define as 1 to enable ptrace the executable */\n";
-static int TRACEABLE_flag=1;
+static int TRACEABLE_flag = 1;
 static const char HARDENING_line[] =
 "#define HARDENING	%d	/* Define as 1 to disable ptrace/dump the executable */\n";
-static int HARDENING_flag=0;
+static int HARDENING_flag = 0;
 static const char HARDENINGSP_line[] =
 "#define HARDENINGSP	%d	/* Define as 1 to disable bash child process */\n";
-static int HARDENINGSP_flag=0;
+static int HARDENINGSP_flag = 0;
 static const char BUSYBOXON_line[] =
 "#define BUSYBOXON	%d	/* Define as 1 to enable work with busybox */\n";
-static int BUSYBOXON_flag;
+static int BUSYBOXON_flag = 0;
 
 static const char * RTC[] = {
 "",
