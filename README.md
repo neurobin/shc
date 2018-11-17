@@ -52,8 +52,11 @@ The one (and I hope the only) limitation using shc is the _SC_ARG_MAX system con
 It limits the maximum length of the arguments to the exec function, limiting the maximum length of the runnable script of shc.
 
 !! - CHECK YOUR RESULTS CAREFULLY BEFORE USING - !!
-<h3><a href="http://neurobin.github.io/shc/man.html">Man Page</a></h3>
-<h3><a href="http://neurobin.github.io/shc">WebPage</a></h3>
+
+## Links
+
+1. [Man Page](http://neurobin.github.io/shc/man.html)
+2. [Web Page](http://neurobin.github.io/shc)
 
 # Contributing
 
