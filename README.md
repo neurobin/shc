@@ -39,6 +39,12 @@ shc -H -f script.sh -o binary # Untraceable binary, does not require root (only 
 shc -H -s -f script.sh -o binary # Untraceable binary running in a singe process, does not require root (only bourne shell (sh) scripts with no parameter)
 ```
 
+## The hardening flag -H
+
+This flag is currently in an experimental state and may not work in all systems. This flag only works for **default** shell. For example, if you compile a **bash** script with `-H` flag then the resultant executable will only work in systems where the default shell is **bash**. You may change the default shell which generally is `/bin/sh` which further is just a link to another shell like bash or dash etc.
+
+**Also `-H` does not work with positional parameters (yet)**
+
 ## Testing
 
 ```bash
