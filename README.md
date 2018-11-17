@@ -54,3 +54,17 @@ It limits the maximum length of the arguments to the exec function, limiting the
 !! - CHECK YOUR RESULTS CAREFULLY BEFORE USING - !!
 <h3><a href="http://neurobin.github.io/shc/man.html">Man Page</a></h3>
 <h3><a href="http://neurobin.github.io/shc">WebPage</a></h3>
+
+# Contributing
+
+If you want to make pull requests, please do so against the **master** branch. The default branch is **release** which should contain clean package files ready to be used.
+
+If you want to edit the manual, please edit the **man.md** file (available in the master branch) instead and then generate the manual file from it with the command (requires `pandoc` to be installed):
+
+```bash
+pandoc -s man.md -t man -o shc.1
+#also run this command to generate the html manual
+pandoc -s man.md -t html -o man.html
+```
+
+If you change anything related to autotools, please run `./autogen.sh` afterwards.
