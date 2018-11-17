@@ -41,10 +41,11 @@ shc -H -s -f script.sh -o binary # Untraceable binary running in a singe process
 
 ## Testing
 
-1. `cd` to `test` directory: `cd test`
-1. Try: `shc -f test.bash -o test`, where <span class="light-quote">test.bash</span> is the bash source.
-2. output binary file will be test. If no output file is specified
-by the `-o` option, then it will create an executable with `.x` extension by default.
+```bash
+./configure
+make
+make check
+```
 
 ## Known bugs
 
