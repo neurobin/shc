@@ -13,9 +13,11 @@ shc itself is not a compiler such as cc, it rather encodes and encrypts a shell 
 
 ## Install
 
-1. ./configure
-2. make
-3. sudo make install
+```bash
+./configure
+make
+sudo make install
+```
 
 **Note** If `make` fails due to *automake* version, run `./autogen.sh` before running the above commands.
 
