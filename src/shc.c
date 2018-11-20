@@ -102,6 +102,7 @@ static const char * help[] = {
 "    Name    Default  Usage",
 "    CC      cc       C compiler command",
 "    CFLAGS  <none>   C compiler flags",
+"    LDFLAGS <none>   Linker flags",
 "",
 "    Please consult the shc man page.",
 "",
@@ -1229,7 +1230,7 @@ int write_C(char * file, char * argv[])
 
 int make(void)
 {
-	char * cc, * cflags;
+	char * cc, * cflags, * ldflags;
 	char cmd[SIZE];
 
 	cc = getenv("CC");
@@ -1238,6 +1239,9 @@ int make(void)
 	cflags = getenv("CFLAGS");
 	if (!cflags)
 		cflags = "";
+	ldflags = getenv("LDFLAGS");
+	if (!ldflags)
+		ldflags = "";
 
 if(!file2){
 file2=(char*)realloc(file2,strlen(file)+3);
@@ -1245,7 +1249,7 @@ strcpy(file2,file);
 file2=strcat(file2,".x");
 
 }
-	sprintf(cmd, "%s %s %s.x.c -o %s", cc, cflags, file, file2);
+	sprintf(cmd, "%s %s %s %s.x.c -o %s", cc, cflags, ldflags, file, file2);
 	if (verbose) fprintf(stderr, "%s: %s\n", my_name, cmd);
 	if (system(cmd))
 		return -1;
