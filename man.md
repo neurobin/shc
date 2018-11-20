@@ -1,6 +1,6 @@
 % shc(1) shc user manual
 %
-% November 13, 2018
+% November 20, 2018
 <hr>
 
 # NAME
@@ -97,6 +97,8 @@ CC
 CFLAGS
 : C compiler flags `[none]`
 
+LDFLAGS
+: Linker flags `[none]`
  
 # EXAMPLES
 
