@@ -1,5 +1,9 @@
 CHANGES
 
+4.0.1 Tue Nov 20 08:22:20 UTC 2018
+
+    * Add LDFLAGS environment variable (Thanks to zboszor <https://github.com/zboszor>)
+
 4.0.0 Mon Nov 12 16:54:56 UTC 2018
 
 	* Add -H option for extra security without root (Thanks to intika <https://github.com/intika>). It protects against dumping, code injection, `cat /proc/pid/cmdline`, ptrace, etc.. (only works with Bourne shell (sh) scripts with no parameter)
