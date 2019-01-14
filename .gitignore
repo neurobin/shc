@@ -1,5 +1,6 @@
 src/.deps
-*Makefile # Not quite sure this is wanted
+# Not quite sure this is wanted
+*Makefile
 config.status
 /build
 /autom4te.cache
