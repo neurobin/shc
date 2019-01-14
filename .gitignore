@@ -1,5 +1,6 @@
 src/.deps
-# Not quite sure this is wanted
+src/shc
+src/shc.o
 *Makefile
 config.status
 /build
