@@ -1,6 +1,6 @@
 % shc(1) shc user manual
 %
-% November 20, 2018
+% January 14, 2019
 <hr>
 
 # NAME
@@ -120,7 +120,7 @@ Compile an untraceable binary that doesn't require root access (experimental):
 shc -Hf myscript -o mybinary
 ```
  
-# BUGS
+# LIMITATIONS
 The maximum size of the script that could be executed once compiled is limited by the operating system configuration parameter `_SC_ARG_MAX` (see sysconf(2))
 
 # AUTHORS
