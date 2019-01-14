@@ -1,3 +1,6 @@
+src/.deps
+*Makefile # Not quite sure this is wanted
+config.status
 /build
 /autom4te.cache
 *.scan
