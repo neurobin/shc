@@ -1,3 +1,8 @@
+src/.deps
+src/shc
+src/shc.o
+*Makefile
+config.status
 /build
 /autom4te.cache
 *.scan
