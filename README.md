@@ -55,7 +55,7 @@ make
 make check
 ```
 
-## Known bugs
+## Known limitations
 
 The one (and I hope the only) limitation using shc is the _SC_ARG_MAX system configuration parameter.
 It limits the maximum length of the arguments to the exec function, limiting the maximum length of the runnable script of shc.
