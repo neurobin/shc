@@ -38,7 +38,6 @@ shc [options]
 shc -f script.sh -o binary
 shc -U -f script.sh -o binary # Untraceable binary (prevent strace, ptrace etc..)
 shc -H -f script.sh -o binary # Untraceable binary, does not require root (only bourne shell (sh) scripts with no parameter)
-shc -H -s -f script.sh -o binary # Untraceable binary running in a singe process, does not require root (only bourne shell (sh) scripts with no parameter)
 ```
 
 ## The hardening flag -H
