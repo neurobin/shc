@@ -775,11 +775,6 @@ static void parse_args(int argc, char * argv[])
 			err++;
 	} while (ret);
     
-    if (HARDENING_flag == 0 && HARDENINGSP_flag == 1) {
-        fprintf(stderr, "\n%s '-s' feature is only available with '-H'\n",my_name);
-        err++;
-    }
-    
 	if (err) {
 		fprintf(stderr, "\n%s %s\n\n", my_name, usage);
 		exit(1);
