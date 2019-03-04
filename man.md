@@ -7,7 +7,7 @@
 shc - Generic shell script compiler
 
 # SYNOPSIS
-**shc** [ -e *date* ] [ -m *addr* ] [ -i *iopt* ] [ -x *cmnd* ] [ -l *lopt* ] [ -o *outfile* ] [ -ABCDhUHsvSr ] -f *script* 
+**shc** [ -e *date* ] [ -m *addr* ] [ -i *iopt* ] [ -x *cmnd* ] [ -l *lopt* ] [ -o *outfile* ] [ -ABCDhUHvSr ] -f *script* 
 
 # DESCRIPTION
 **shc** creates a stripped binary executable version of the script specified with `-f` on the command line.
@@ -71,10 +71,7 @@ You can use it if you wish to distribute your scripts but don't want them to be 
 : Make binary to be untraceable (using *strace*, *ptrace*, *truss*, etc.) 
 
 -H
-: Hardening. Extra security flag without root access requirement that protects against dumping, code injection, `cat /proc/pid/cmdline`, ptrace, etc.. This feature is **experimental** and may not work on all systems. This option currently only works with Bourne shell (sh) scripts without any positional parameters.
-
--s
-: Hardening with single process. Requires -H option, runs the binary in a single process, shell is called in the main process otherwise its called in a child process. This feature is **experimental** (may hang) and may not work on all systems. This option currently only works with Bourne shell (sh) scripts without any positional parameters.
+: Hardening. Extra security flag without root access requirement that protects against dumping, code injection, `cat /proc/pid/cmdline`, ptrace, etc.. This feature is **experimental** and may not work on all systems. it require bourne shell (sh) scripts
 
 -C
 : Display license and exit 

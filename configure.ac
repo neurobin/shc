@@ -1,4 +1,4 @@
-AC_INIT([shc], [4.0.1], [http://github.com/neurobin/shc/issues])
+AC_INIT([shc], [4.0.3], [http://github.com/neurobin/shc/issues])
 AC_CONFIG_AUX_DIR(config)
 #prefix="/usr"
 AC_CONFIG_SRCDIR([src/shc.c])
