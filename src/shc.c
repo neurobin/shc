@@ -265,7 +265,7 @@ static const char * RTC[] = {
 "    BPF_STMT(BPF_LD+BPF_W+BPF_ABS, offsetof(struct seccomp_data, nr)),",
 "",
 "    /* list of allowed syscalls */",
-"    Allow(exit_group),  /* exits a processs */",
+"    Allow(exit_group),  /* exits a process */",
 "    Allow(brk),         /* for malloc(), inside libc */",
 "    Allow(mmap),        /* also for malloc() */",
 "    Allow(munmap),      /* for free(), inside libc */",
