@@ -971,6 +971,10 @@ int eval_shell(char * text)
 
 	shll = realloc(shll, strlen(shll) + 1);
 	ptr  = strrchr(shll, (int)'/');
+	if (!ptr) {
+		fprintf(stderr, "%s: invalid shll\n", my_name);
+		return -1;
+	}
 	if (*ptr == '/')
 		ptr++;
 	if (verbose) fprintf(stderr, "%s shll=%s\n", my_name, ptr);
