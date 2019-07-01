@@ -1,5 +1,10 @@
 CHANGES
 
+4.0.2 Mon 01 Jul 2019 02:57:36 PM UTC
+
+    * Fix typo
+    * Fix NULL-ptr dereference in shll string (Thanks to Ren Kimura<https://github.com/RKX1209>)
+
 4.0.1 Tue Nov 20 08:22:20 UTC 2018
 
     * Add LDFLAGS environment variable (Thanks to zboszor <https://github.com/zboszor>)
