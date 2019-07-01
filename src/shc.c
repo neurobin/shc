@@ -17,7 +17,7 @@
  */
 
 static const char my_name[] = "shc";
-static const char version[] = "Version 4.0.1";
+static const char version[] = "Version 4.0.2";
 static const char subject[] = "Generic Shell Script Compiler";
 static const char cpright[] = "GNU GPL Version 3";
 static const struct { const char * f, * s, * e; }
@@ -265,7 +265,7 @@ static const char * RTC[] = {
 "    BPF_STMT(BPF_LD+BPF_W+BPF_ABS, offsetof(struct seccomp_data, nr)),",
 "",
 "    /* list of allowed syscalls */",
-"    Allow(exit_group),  /* exits a processs */",
+"    Allow(exit_group),  /* exits a process */",
 "    Allow(brk),         /* for malloc(), inside libc */",
 "    Allow(mmap),        /* also for malloc() */",
 "    Allow(munmap),      /* for free(), inside libc */",
@@ -971,6 +971,10 @@ int eval_shell(char * text)
 
 	shll = realloc(shll, strlen(shll) + 1);
 	ptr  = strrchr(shll, (int)'/');
+	if (!ptr) {
+		fprintf(stderr, "%s: invalid shll\n", my_name);
+		return -1;
+	}
 	if (*ptr == '/')
 		ptr++;
 	if (verbose) fprintf(stderr, "%s shll=%s\n", my_name, ptr);
