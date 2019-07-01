@@ -27,7 +27,7 @@ thus **shc** does not create completely independent binaries.
 **shc** itself is not a compiler such as cc, it rather encodes and encrypts a shell script and generates C source code with the added expiration capability. 
 It then uses the system compiler to compile a stripped binary which behaves exactly like the original script.
 Upon execution, the compiled binary will decrypt and execute the code with the shell `-c` option.
-Unfortunatelly, it will not give you any speed improvement as a real C program would.
+Unfortunately, it will not give you any speed improvement as a real C program would.
 
 **shc**'s main purpose is to protect your shell scripts from modification or inspection.
 You can use it if you wish to distribute your scripts but don't want them to be easily readable by other people.   
