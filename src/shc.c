@@ -17,7 +17,7 @@
  */
 
 static const char my_name[] = "shc";
-static const char version[] = "Version 4.0.2";
+static const char version[] = "Version 4.0.3";
 static const char subject[] = "Generic Shell Script Compiler";
 static const char cpright[] = "GNU GPL Version 3";
 static const struct { const char * f, * s, * e; }
@@ -68,7 +68,7 @@ static const char * abstract[] = {
 0};
 
 static const char usage[] = 
-"Usage: shc [-e date] [-m addr] [-i iopt] [-x cmnd] [-l lopt] [-o outfile] [-rvDSUHCABhs] -f script";
+"Usage: shc [-e date] [-m addr] [-i iopt] [-x cmnd] [-l lopt] [-o outfile] [-rvDSUHCABh] -f script";
 
 static const char * help[] = {
 "",
@@ -85,14 +85,7 @@ static const char * help[] = {
 "    -D     Switch ON debug exec calls [OFF]",
 "    -U     Make binary untraceable [no]",
 "    -H     Hardening : extra security protection [no]",
-"           untraceable, undumpable, etc. and root is not required",
-"           * currently only works with bourne shell (sh)",
-"           * does not work with positional parameters",
-"    -s     Hardening : use a single process (no child) [no]",
-"           option available only with -H otherwise its ignored",
-"           experimental feature may hang...",
-"           * currently only works with bourne shell (sh)",
-"           * does not work with positional parameters",
+"           Require bourne shell (sh) and parameters are not supported",
 "    -C     Display license and exit",
 "    -A     Display abstract and exit",
 "    -B     Compile for busybox",
@@ -148,14 +141,91 @@ static int TRACEABLE_flag = 1;
 static const char HARDENING_line[] =
 "#define HARDENING	%d	/* Define as 1 to disable ptrace/dump the executable */\n";
 static int HARDENING_flag = 0;
-static const char HARDENINGSP_line[] =
-"#define HARDENINGSP	%d	/* Define as 1 to disable bash child process */\n";
-static int HARDENINGSP_flag = 0;
 static const char BUSYBOXON_line[] =
 "#define BUSYBOXON	%d	/* Define as 1 to enable work with busybox */\n";
 static int BUSYBOXON_flag = 0;
 
 static const char * RTC[] = {
+"",
+"#if HARDENING",
+"static const char * shc_x[] = {",
+"\"/*\",",
+"\" * Copyright 2019 - Intika <intika@librefox.org>\",",
+"\" * Replace ******** with secret read from fd 21\",",
+"\" * Also change arguments location of sub commands (sh script commands)\",",
+"\" * gcc -Wall -fpic -shared -o shc_secret.so shc_secret.c -ldl\",",
+"\" */\",",
+"\"\",",
+"\"#define _GNU_SOURCE /* needed to get RTLD_NEXT defined in dlfcn.h */\",",
+"\"#define PLACEHOLDER \\\"********\\\"\",",
+"\"#include <dlfcn.h>\",",
+"\"#include <stdlib.h>\",",
+"\"#include <string.h>\",",
+"\"#include <unistd.h>\",",
+"\"#include <stdio.h>\",",
+"\"#include <signal.h>\",",
+"\"\",",
+"\"static char secret[128000]; //max size\",",
+"\"typedef int (*pfi)(int, char **, char **);\",",
+"\"static pfi real_main;\",",
+"\"\",",
+"\"// copy argv to new location\",",
+"\"char **copyargs(int argc, char** argv){\",",
+"\"    char **newargv = malloc((argc+1)*sizeof(*argv));\",",
+"\"    char *from,*to;\",",
+"\"    int i,len;\",",
+"\"\",",
+"\"    for(i = 0; i<argc; i++){\",",
+"\"        from = argv[i];\",",
+"\"        len = strlen(from)+1;\",",
+"\"        to = malloc(len);\",",
+"\"        memcpy(to,from,len);\",",
+"\"        // zap old argv space\",",
+"\"        memset(from,'\\\\0',len);\",",
+"\"        newargv[i] = to;\",",
+"\"        argv[i] = 0;\",",
+"\"    }\",",
+"\"    newargv[argc] = 0;\",",
+"\"    return newargv;\",",
+"\"}\",",
+"\"\",",
+"\"static int mymain(int argc, char** argv, char** env) {\",",
+"\"    //fprintf(stderr, \\\"Inject main argc = %d\\\\n\\\", argc);\",",
+"\"    return real_main(argc, copyargs(argc,argv), env);\",",
+"\"}\",",
+"\"\",",
+"\"int __libc_start_main(int (*main) (int, char**, char**),\",",
+"\"                      int argc,\",",
+"\"                      char **argv,\",",
+"\"                      void (*init) (void),\",",
+"\"                      void (*fini)(void),\",",
+"\"                      void (*rtld_fini)(void),\",",
+"\"                      void (*stack_end)){\",",
+"\"    static int (*real___libc_start_main)() = NULL;\",",
+"\"    int n;\",",
+"\"\",",
+"\"    if (!real___libc_start_main) {\",",
+"\"        real___libc_start_main = dlsym(RTLD_NEXT, \\\"__libc_start_main\\\");\",",
+"\"        if (!real___libc_start_main) abort();\",",
+"\"    }\",",
+"\"\",",
+"\"    n = read(21, secret, sizeof(secret));\",",
+"\"    if (n > 0) {\",",
+"\"      int i;\",",
+"\"\",",
+"\"    if (secret[n - 1] == '\\\\n') secret[--n] = '\\\\0';\",",
+"\"    for (i = 1; i < argc; i++)\",",
+"\"        if (strcmp(argv[i], PLACEHOLDER) == 0)\",",
+"\"          argv[i] = secret;\",",
+"\"    }\",",
+"\"\",",
+"\"    real_main = main;\",",
+"\"\",",
+"\"    return real___libc_start_main(mymain, argc, argv, init, fini, rtld_fini, stack_end);\",",
+"\"}\",",
+"\"\",",
+"0};",
+"#endif /* HARDENING */",
 "",
 "/* rtc.c */",
 "",
@@ -291,64 +361,51 @@ static const char * RTC[] = {
 "} ",
 "/* End Seccomp Sandboxing Init */",
 "",
+"void shc_x_file() {",
+"    FILE *fp;",
+"    int line = 0;",
+"",
+"    if ((fp = fopen(\"/tmp/shc_x.c\", \"w\")) == NULL ) {exit(1); exit(1);}",
+"    for (line = 0; shc_x[line]; line++)	fprintf(fp, \"%s\\n\", shc_x[line]);",
+"    fflush(fp);fclose(fp);",
+"}",
+"",
+"int make() {",
+"	char * cc, * cflags, * ldflags;",
+"    char cmd[4096];",
+"",
+"	cc = getenv(\"CC\");",
+"	if (!cc) cc = \"cc\";",
+"",
+"	sprintf(cmd, \"%s %s -o %s %s\", cc, \"-Wall -fpic -shared\", \"/tmp/shc_x.so\", \"/tmp/shc_x.c -ldl\");",
+"	if (system(cmd)) {remove(\"/tmp/shc_x.c\"); return -1;}",
+"	remove(\"/tmp/shc_x.c\"); return 0;",
+"}",
+"",
 "void arc4_hardrun(void * str, int len) {",
 "    //Decode locally",
 "    char tmp2[len];",
+"    char tmp3[len+1024];",
 "    memcpy(tmp2, str, len);",
 "",
 "	unsigned char tmp, * ptr = (unsigned char *)tmp2;",
-"",
 "    int lentmp = len;",
-"",
-"#if HARDENINGSP",
-"    //Start tracing to protect from dump & trace",
-"    if (ptrace(PTRACE_TRACEME, 0, 0, 0) < 0) {",
-"        printf(\"Operation not permitted\\n\");",
-"        kill(getpid(), SIGKILL);",
-"        exit(1);",
-"    }",
-"",     
-"    //Decode Bash",
-"    while (len > 0) {",
-"        indx++;",
-"        tmp = stte[indx];",
-"        jndx += tmp;",
-"        stte[indx] = stte[jndx];",
-"        stte[jndx] = tmp;",
-"        tmp += stte[indx];",
-"        *ptr ^= stte[tmp];",
-"        ptr++;",
-"        len--;",
-"    }",
-"",
-"    //Exec bash script",
-"    system(tmp2);",
-"",
-"    //Empty script variable",
-"    memcpy(tmp2, str, lentmp);",
-"",
-"    //Sinal to detach ptrace",
-"    ptrace(PTRACE_DETACH, 0, 0, 0);",
-"    exit(0);",
-"",
-"    /* Seccomp Sandboxing - Start */",
-"    seccomp_hardening();",
-"",
-"    exit(0);",
-"#endif /* HARDENINGSP Exit here anyway*/",
-"",
 "    int pid, status;",
 "    pid = fork();",
-"",     
+"",
+"    shc_x_file();",
+"    if (make()) {exit(1);}",
+"",
+"    setenv(\"LD_PRELOAD\",\"/tmp/shc_x.so\",1);",
+"",
 "    if(pid==0) {",
 "",
 "        //Start tracing to protect from dump & trace",
 "        if (ptrace(PTRACE_TRACEME, 0, 0, 0) < 0) {",
-"            printf(\"Operation not permitted\\n\");",
 "            kill(getpid(), SIGKILL);",
 "            _exit(1);",
 "        }",
-"",     
+"",
 "        //Decode Bash",
 "        while (len > 0) {",
 "            indx++;",
@@ -362,25 +419,29 @@ static const char * RTC[] = {
 "            len--;",
 "        }",
 "",
-"        //Exec bash script",
+"        //Do the magic",
+"        sprintf(tmp3, \"%s %s\", \"'********' 21<<<\", tmp2);",
+"",
+"        //Exec bash script //fork execl with 'sh -c'",
 "        system(tmp2);",
 "",
 "        //Empty script variable",
 "        memcpy(tmp2, str, lentmp);",
 "",
+"        //Clean temp",
+"        remove(\"/tmp/shc_x.so\");",
+"",
 "        //Sinal to detach ptrace",
 "        ptrace(PTRACE_DETACH, 0, 0, 0);",
 "        exit(0);",
 "    }",
-"    else {",
-"        wait(&status);",
-"    }",
+"    else {wait(&status);}",
 "",
 "    /* Seccomp Sandboxing - Start */",
 "    seccomp_hardening();",
 "",
 "    exit(0);",
-"} ",
+"}",
 "#endif /* HARDENING */",
 "",
 "/*",
@@ -689,7 +750,7 @@ static const char * RTC[] = {
 static int parse_an_arg(int argc, char * argv[])
 {
 	extern char * optarg;
-	const char * opts = "e:m:f:i:x:l:o:rvDSUHCABhs";
+	const char * opts = "e:m:f:i:x:l:o:rvDSUHCABh";
 	struct tm tmp[1];
 	time_t expdate;
 	int cnt, l;
@@ -755,9 +816,6 @@ static int parse_an_arg(int argc, char * argv[])
 		break;
 	case 'H':
 		HARDENING_flag = 1;
-		break;
-	case 's':
-        HARDENINGSP_flag = 1;
 		break;
 	case 'C':
 		fprintf(stderr, "%s %s, %s\n", my_name, version, subject);
@@ -825,11 +883,6 @@ static void parse_args(int argc, char * argv[])
 		if (ret == -1)
 			err++;
 	} while (ret);
-    
-    if (HARDENING_flag == 0 && HARDENINGSP_flag == 1) {
-        fprintf(stderr, "\n%s '-s' feature is only available with '-H'\n",my_name);
-        err++;
-    }
     
 	if (err) {
 		fprintf(stderr, "\n%s %s\n\n", my_name, usage);
@@ -1222,7 +1275,6 @@ int write_C(char * file, char * argv[])
 	fprintf(o, DEBUGEXEC_line, DEBUGEXEC_flag);
 	fprintf(o, TRACEABLE_line, TRACEABLE_flag);
 	fprintf(o, HARDENING_line, HARDENING_flag);
-	fprintf(o, HARDENINGSP_line, HARDENINGSP_flag);
     fprintf(o, BUSYBOXON_line, BUSYBOXON_flag);
 	for (indx = 0; RTC[indx]; indx++)
 		fprintf(o, "%s\n", RTC[indx]);
