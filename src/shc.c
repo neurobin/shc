@@ -21,9 +21,9 @@ static const char version[] = "Version 4.0.3";
 static const char subject[] = "Generic Shell Script Compiler";
 static const char cpright[] = "GNU GPL Version 3";
 static const struct { const char * f, * s, * e; }
-	provider = { "Md Jahidul", "Hamid", "<jahidulhamid@yahoo.com>" };          
+	provider = { "Md Jahidul", "Hamid", "<jahidulhamid@yahoo.com>" };
 
-/* 
+/*
 static const struct { const char * f, * s, * e; }
 	author = { "Francisco", "Garcia", "<frosal@fi.upm.es>" };
 */
@@ -81,7 +81,9 @@ static const char * help[] = {
 "    -o %s  output filename",
 "    -r     Relax security. Make a redistributable binary",
 "    -v     Verbose compilation",
-"    -S     Switch ON setuid for root callable programs [OFF]",
+"    -S     Switch ON setuid(0) for root callable programs [OFF]",
+"    -u %s  Use setuid(id) with the specified user id. If id is \"auto\" then current euid is used.",
+"    -g %s  Use setgid(id) with the specified group id. If id is \"auto\" then current egid is used.",
 "    -D     Switch ON debug exec calls [OFF]",
 "    -U     Make binary untraceable [no]",
 "    -H     Hardening : extra security protection [no]",
@@ -129,6 +131,12 @@ static char * lsto;
 static char * opts;
 static char * text;
 static int verbose;
+static const char UID_line[] =
+"#define UID %s	/* Define with an id or auto to call setuid(id) or setuid(geteuid()) at start of script */\n";
+static char * uid;
+static const char GID_line[] =
+"#define GID %s	/* Define with an id or auto to call setgid(id) or setgid(getegid()) at start of script */\n";
+static char * gid;
 static const char SETUID_line[] =
 "#define SETUID %d	/* Define as 1 to call setuid(0) at start of script */\n";
 static int SETUID_flag = 0;
@@ -725,8 +733,17 @@ static const char * RTC[] = {
 "",
 "int main(int argc, char ** argv)",
 "{",
-"#if SETUID",
+"#if UID==auto",
+"   setuid(geteuid());",
+"#elif UID",
+"   setuid(UID);",
+"#elif SETUID",
 "   setuid(0);",
+"#endif",
+"#if GID==auto",
+"   setgid(getegid());",
+"#elif GID",
+"   setgid(GID);",
 "#endif",
 "#if DEBUGEXEC",
 "	debugexec(\"main\", argc, argv);",
@@ -807,7 +824,13 @@ static int parse_an_arg(int argc, char * argv[])
 		break;
 	case 'S':
 		SETUID_flag = 1;
-        break;
+    break;
+	case 'u':
+		uid = optarg;
+    break;
+	case 'g':
+		gid = optarg;
+    break;
 	case 'D':
 		DEBUGEXEC_flag = 1;
 		break;
@@ -895,7 +918,7 @@ static void parse_args(int argc, char * argv[])
 static unsigned char stte[256], indx, jndx, kndx;
 
 /*
- * Reset arc4 stte. 
+ * Reset arc4 stte.
  */
 void stte_0(void)
 {
@@ -906,7 +929,7 @@ void stte_0(void)
 }
 
 /*
- * Set key. Can be used more than once. 
+ * Set key. Can be used more than once.
  */
 void key(void * str, int len)
 {
@@ -925,7 +948,7 @@ void key(void * str, int len)
 }
 
 /*
- * Crypt data. 
+ * Crypt data.
  */
 void arc4(void * str, int len)
 {
@@ -1272,6 +1295,8 @@ int write_C(char * file, char * argv[])
 	fprintf(o, "/* End of data[] */;\n");
 	fprintf(o, "#define      %s_z	%d\n", "hide", 1<<12);
 	fprintf(o, SETUID_line, SETUID_flag);
+	if (uid!=NULL) fprintf(o, UID_line, uid);
+	if (gid!=NULL) fprintf(o, GID_line, gid);
 	fprintf(o, DEBUGEXEC_line, DEBUGEXEC_flag);
 	fprintf(o, TRACEABLE_line, TRACEABLE_flag);
 	fprintf(o, HARDENING_line, HARDENING_flag);
@@ -1345,4 +1370,3 @@ int main(int argc, char * argv[])
 	exit(1);
 	return 1;
 }
-
