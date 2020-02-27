@@ -25,8 +25,8 @@ sudo make install
 
 ```
 sudo add-apt-repository ppa:neurobin/ppa
-sudo apt-get update
-sudo apt-get install shc
+sudo apt update
+sudo apt install shc
 ```
 
 If the above installation method seems like too much work, then just download a compiled binary package from [release page](https://github.com/neurobin/shc/releases/latest) and copy the `shc` binary to `/usr/bin` and `shc.1` file to `/usr/share/man/man1`.
