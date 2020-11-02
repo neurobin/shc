@@ -1,5 +1,13 @@
-dist: trusty
+dist: xenial
 sudo: required
 language: c
-script: ./autogen.sh; ./configure && make && make check
+before_install:
+  - sudo apt-get update -q
+  - sudo apt install dash bash ash ksh zsh tcsh csh rc
+script: 
+  - ./autogen.sh
+  - ./configure
+  - make
+  - make test
+
 

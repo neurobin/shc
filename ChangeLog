@@ -1,5 +1,33 @@
 CHANGES
 
+4.0.3 Tue Nov 20 08:22:20 UTC 2018
+
+    * Enhance -H flag by intika <https://github.com/intika> (Hide commands arguments from ps and cmdline)
+    * Remove -s flag (experimental feature not working as expected by intika <https://github.com/intika>)
+
+4.0.2 Mon 01 Jul 2019 02:57:36 PM UTC
+
+    * Fix typo
+    * Fix NULL-ptr dereference in shll string (Thanks to Ren Kimura<https://github.com/RKX1209>)
+
+4.0.1 Tue Nov 20 08:22:20 UTC 2018
+
+    * Add LDFLAGS environment variable (Thanks to zboszor <https://github.com/zboszor>)
+
+4.0.0 Mon Nov 12 16:54:56 UTC 2018
+
+    * Add -H option for extra security without root (Thanks to intika <https://github.com/intika>). It protects against dumping, code injection, `cat /proc/pid/cmdline`, ptrace, etc.. (only works with Bourne shell (sh) scripts with no parameter)
+    * Add -s option to force single process for hardening features (requires -H) <https://github.com/intika>. (only works with Bourne shell (sh) scripts with no parameter)
+    * dash support
+
+3.9.8 Sat Oct 20 17:49:28 UTC 2018
+
+    * Add setuid option -S (Thanks to Boon Pang <https://github.com/wombat78>)
+
+3.9.7 Sat Oct 20 15:25:13 UTC 2018
+
+    * Fix issue #58
+
 3.9.6 Sat Jun  3 10:05:03 UTC 2017
 
     * Fix issue #38
@@ -10,7 +38,7 @@ CHANGES
 
 3.9.4   Sat May 13 18:46:05 UTC 2017
 
-    * Fix issue #23 (debian bug #861180)
+    * Fix issue #23 (debian bug #861180) (Thanks to original author Francisco Rosales <frosal@fi.upm.es>)
 
 3.9.3   Sat Jul 30 18:46:34 BDT 2016
 
