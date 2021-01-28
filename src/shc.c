@@ -94,6 +94,7 @@ static const char * help[] = {
 "    Environment variables used:",
 "    Name    Default  Usage",
 "    CC      cc       C compiler command",
+"    STRIP   strip    Strip command",
 "    CFLAGS  <none>   C compiler flags",
 "    LDFLAGS <none>   Linker flags",
 "",
@@ -1309,7 +1310,10 @@ file2=strcat(file2,".x");
 	if (verbose) fprintf(stderr, "%s: %s\n", my_name, cmd);
 	if (system(cmd))
 		return -1;
-	sprintf(cmd, "strip %s", file2);
+	char* strip = getenv("STRIP");
+	if (!strip)
+		strip = "strip";
+	sprintf(cmd, "%s %s", strip, file2);
 	if (verbose) fprintf(stderr, "%s: %s\n", my_name, cmd);
 	if (system(cmd))
 		fprintf(stderr, "%s: never mind\n", my_name);
