@@ -68,7 +68,7 @@ static const char * abstract[] = {
 0};
 
 static const char usage[] = 
-"Usage: shc [-e date] [-m addr] [-i iopt] [-x cmd] [-l lopt] [-o outfile] [-rvDSUHCABh] -f script";
+"Usage: shc [-e date] [-m addr] [-i iopt] [-x cmd] [-l lopt] [-o outfile] [-rvDSUHCAB2h] -f script";
 
 static const char * help[] = {
 "",
@@ -89,6 +89,7 @@ static const char * help[] = {
 "    -C     Display license and exit",
 "    -A     Display abstract and exit",
 "    -B     Compile for busybox",
+"    -2     Use the system call mmap2",
 "    -h     Display help and exit",
 "",
 "    Environment variables used:",
@@ -142,6 +143,9 @@ static int TRACEABLE_flag = 1;
 static const char HARDENING_line[] =
 "#define HARDENING	%d	/* Define as 1 to disable ptrace/dump the executable */\n";
 static int HARDENING_flag = 0;
+static const char MMAP2_line[] =
+"#define MMAP2		%d	/* Define as 1 to use syscall mmap2 */\n";
+static int MMAP2_flag = 0;
 static const char BUSYBOXON_line[] =
 "#define BUSYBOXON	%d	/* Define as 1 to enable work with busybox */\n";
 static int BUSYBOXON_flag = 0;
@@ -338,7 +342,11 @@ static const char * RTC[] = {
 "    /* list of allowed syscalls */",
 "    Allow(exit_group),  /* exits a process */",
 "    Allow(brk),         /* for malloc(), inside libc */",
+"#if MMAP2",
+"    Allow(mmap2),       /* also for malloc() */",
+"#else",
 "    Allow(mmap),        /* also for malloc() */",
+"#endif",
 "    Allow(munmap),      /* for free(), inside libc */",
 "",
 "    /* and if we don't match above, die */",
@@ -751,7 +759,7 @@ static const char * RTC[] = {
 static int parse_an_arg(int argc, char * argv[])
 {
 	extern char * optarg;
-	const char * opts = "e:m:f:i:x:l:o:rvDSUHCABh";
+	const char * opts = "e:m:f:i:x:l:o:rvDSUHCAB2h";
 	struct tm tmp[1];
 	time_t expdate;
 	int cnt, l;
@@ -852,6 +860,9 @@ static int parse_an_arg(int argc, char * argv[])
 		return 0;
 	case 'B':
 		BUSYBOXON_flag = 1;
+		break;
+	case '2':
+		MMAP2_flag = 1;
 		break;
 	case ':':
 		fprintf(stderr, "%s parse: Missing parameter\n", my_name);
@@ -1277,6 +1288,7 @@ int write_C(char * file, char * argv[])
 	fprintf(o, TRACEABLE_line, TRACEABLE_flag);
 	fprintf(o, HARDENING_line, HARDENING_flag);
     fprintf(o, BUSYBOXON_line, BUSYBOXON_flag);
+	fprintf(o, MMAP2_line, MMAP2_flag);
 	for (indx = 0; RTC[indx]; indx++)
 		fprintf(o, "%s\n", RTC[indx]);
 	fflush(o);
