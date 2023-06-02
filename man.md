@@ -126,5 +126,5 @@ Francisco Rosales <frosal@fi.upm.es>
 Md Jahidul Hamid <jahidulhamid@yahoo.com>
 
 # REPORT BUGS TO
-<https://github.com/neurobin/shc/issues> 
+https://github.com/neurobin/shc/issues 
 
