@@ -1048,6 +1048,9 @@ struct {
 	{ "ash",  "-c", "--", "exec '%s' \"$@\"" }, /* Linux */
 	{ "csh",  "-c", "-b", "exec '%s' $argv" }, /* AIX: No file for $0 */
 	{ "tcsh", "-c", "-b", "exec '%s' $argv" },
+	{ "python", "-c", "", "import os,sys;os.execv('%s',sys.argv)" },
+	{ "python2", "-c", "", "import os,sys;os.execv('%s',sys.argv)" },
+	{ "python3", "-c", "", "import os,sys;os.execv('%s',sys.argv)" },
 	{ NULL,   NULL, NULL, NULL },
 };
 
