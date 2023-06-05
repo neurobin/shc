@@ -152,7 +152,7 @@ static const char BUSYBOXON_line[] =
 static int BUSYBOXON_flag = 0;
 static const char PIPESCRIPT_line[] =
 "#define PIPESCRIPT	%d	/* Define as 1 to submit script as a pipe */\n";
-static int PIPESCRIPT_flag;
+static int PIPESCRIPT_flag = 0;
 
 static const char * RTC[] = {
 "",
