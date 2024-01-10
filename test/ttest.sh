@@ -16,13 +16,14 @@ pc=0
 fc=0
 echo
 echo "== Running tests ..."
-for shell in ${shells[@]}; do
+for shell in "${shells[@]}"; do
     for opt in "${check_opts[@]}"; do
         tmpd=$(mktemp -d)
-        tmpf="$tmpd/test.$(basename $shell)"
+        tmpf="$tmpd/test.$(basename "$shell")"
         echo '#!'"$shell
         echo 'Hello World fp:'\$1 sp:\$2
         " > "$tmpf"
+        # shellcheck disable=SC2086
         "$shc" $opt -f "$tmpf" -o "$tmpd/a.out"
         out=$("$tmpd/a.out" first second)
         #~ echo "  Output: $out"

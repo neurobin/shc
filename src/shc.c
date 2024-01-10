@@ -21,9 +21,9 @@ static const char version[] = "Version 4.0.3";
 static const char subject[] = "Generic Shell Script Compiler";
 static const char cpright[] = "GNU GPL Version 3";
 static const struct { const char * f, * s, * e; }
-	provider = { "Md Jahidul", "Hamid", "<jahidulhamid@yahoo.com>" };          
+	provider = { "Md Jahidul", "Hamid", "<jahidulhamid@yahoo.com>" };
 
-/* 
+/*
 static const struct { const char * f, * s, * e; }
 	author = { "Francisco", "Garcia", "<frosal@fi.upm.es>" };
 */
@@ -57,7 +57,7 @@ static const char * abstract[] = {
 "    of the script specified at command line.",
 "",
 "    Binary version will be saved with a .x extension by default.",
-"    You can specify output file name too with [-o filname] option.",
+"    You can specify output file name too with [-o outfile] option.",
 "",
 "    You can specify expiration date [-e] too, after which binary will",
 "    refuse to be executed, displaying \"[-m]\" instead.",
@@ -67,7 +67,7 @@ static const char * abstract[] = {
 "",
 0};
 
-static const char usage[] = 
+static const char usage[] =
 "Usage: shc [-e date] [-m addr] [-i iopt] [-x cmd] [-l lopt] [-o outfile] [-rvDSUHCAB2h] -f script";
 
 static const char * help[] = {
@@ -279,7 +279,7 @@ static const char * RTC[] = {
 "}",
 "",
 "/*",
-" * Crypt data. ",
+" * Encrypt data. ",
 " */",
 "void arc4(void * str, int len)",
 "{",
@@ -895,7 +895,7 @@ static void parse_args(int argc, char * argv[])
 		if (ret == -1)
 			err++;
 	} while (ret);
-    
+
 	if (err) {
 		fprintf(stderr, "\n%s %s\n\n", my_name, usage);
 		exit(1);
@@ -907,7 +907,7 @@ static void parse_args(int argc, char * argv[])
 static unsigned char stte[256], indx, jndx, kndx;
 
 /*
- * Reset arc4 stte. 
+ * Reset arc4 stte.
  */
 void stte_0(void)
 {
@@ -918,7 +918,7 @@ void stte_0(void)
 }
 
 /*
- * Set key. Can be used more than once. 
+ * Set key. Can be used more than once.
  */
 void key(void * str, int len)
 {
@@ -937,7 +937,7 @@ void key(void * str, int len)
 }
 
 /*
- * Crypt data. 
+ * Encrypt data.
  */
 void arc4(void * str, int len)
 {
@@ -1167,7 +1167,7 @@ void prnt_array(FILE * o, void * ptr, char * name, int l, char * cast)
 	int m = rand_mod(1+l/4);		/* Random amount of random pre  padding (offset) */
 	int n = rand_mod(1+l/4);		/* Random amount of random post padding  (tail)  */
 	int a = (offset+m)%l;
-	if (cast && a) m += l - a;		/* Type alignement. */
+	if (cast && a) m += l - a;		/* Type alignment. */
 	fprintf(o, "\n");
 	fprintf(o, "#define      %s_z	%d", name, l);
 	fprintf(o, "\n");
@@ -1361,4 +1361,3 @@ int main(int argc, char * argv[])
 	exit(1);
 	return 1;
 }
-
