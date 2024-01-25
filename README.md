@@ -27,7 +27,7 @@ sudo make install
 sudo apt-get install shc
 ```
 
-### Ubuntu-specific
+### Ubuntu systems (via PPA repository)
 
 ```
 sudo add-apt-repository ppa:neurobin/ppa
