@@ -29,7 +29,7 @@ sudo apt-get install shc
 
 ### Ubuntu systems (via PPA repository)
 
-```
+```bash
 sudo add-apt-repository ppa:neurobin/ppa
 sudo apt-get update
 sudo apt-get install shc
