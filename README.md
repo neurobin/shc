@@ -21,6 +21,12 @@ sudo make install
 
 **Note** If `make` fails due to *automake* version, run `./autogen.sh` before running the above commands.
 
+### Debian GNU/Linux and Ubuntu systems
+
+```bash
+sudo apt-get install shc
+```
+
 ### Ubuntu-specific
 
 ```
