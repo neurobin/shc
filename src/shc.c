@@ -1030,6 +1030,7 @@ int eval_shell(char * text)
 	i = sscanf(ptr, " #!%s%s %c", shll, opts, opts);
 	if (i < 1 || i > 2) {
 		fprintf(stderr, "%s: invalid first line in script: %s\n", my_name, ptr);
+		free(ptr);
 		return -1;
 	}
 	free(ptr);
@@ -1181,6 +1182,18 @@ void dump_array(FILE * o, void * ptr, char * name, int l, char * cast)
 	prnt_array(o, ptr, name, l, cast);
 }
 
+void cleanup_write_c(char* msg1, char* msg2, char* chk1, char* chk2, char* tst1, char* tst2, char* kwsh, char* name)
+{
+	if (msg1) free(msg1);
+	if (msg2) free(msg2);
+	if (chk1) free(chk1);
+	if (chk2) free(chk2);
+	if (tst1) free(tst1);
+	if (tst2) free(tst2);
+	if (kwsh) free(kwsh);
+	if (name) free(name);
+}
+
 int write_C(char * file, char * argv[])
 {
 	char pswd[256];
@@ -1234,6 +1247,7 @@ int write_C(char * file, char * argv[])
 	if (indx && key_with_file(kwsh)) {
 		fprintf(stderr, "%s: invalid file name: %s ", my_name, kwsh);
 		perror("");
+		cleanup_write_c(msg1, msg2, chk1, chk2, tst1, tst2, kwsh, name);
 		exit(1);
 	}
 	arc4(opts, opts_z); numd++;
@@ -1248,6 +1262,7 @@ int write_C(char * file, char * argv[])
 	if (!o) {
 		fprintf(stderr, "%s: creating output file: %s ", my_name, name);
 		perror("");
+		cleanup_write_c(msg1, msg2, chk1, chk2, tst1, tst2, kwsh, name);
 		exit(1);
 	}
 	fprintf(o, "#if 0\n");
@@ -1281,6 +1296,7 @@ int write_C(char * file, char * argv[])
 			indx = 0;
 		} while (!done);
 	} while (numd+=done);
+	cleanup_write_c(msg1, msg2, chk1, chk2, tst1, tst2, kwsh, name);
 	fprintf(o, "/* End of data[] */;\n");
 	fprintf(o, "#define      %s_z	%d\n", "hide", 1<<12);
 	fprintf(o, SETUID_line, SETUID_flag);
