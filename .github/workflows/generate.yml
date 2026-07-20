@@ -1,0 +1,72 @@
+---
+name: Generate files (documentation, autotools)
+on:
+  push:
+    paths: [man.md, aclocal.m4, configure.ac]
+  workflow_dispatch:
+  workflow_call:
+  release:
+    types: [published]
+
+env:
+  GITHUB_JSON: ${{ toJSON(github) }} # Helps in debugging Github Action
+
+jobs:
+  convert_via_pandoc:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Find branch that the tag was created from
+        if: ${{ startsWith(github.ref_name, 'v') || startsWith(github.ref_name, '4') }}
+        id: get_branch
+        run: |
+          TAG_COMMIT=$(git rev-list -n 1 ${{ github.ref_name }})
+          BRANCH=$(git for-each-ref --format='%(refname:short)' refs/heads/ | while read branch; do git merge-base --is-ancestor $TAG_COMMIT $branch && echo $branch && break ; done)
+          echo "Branch found: $BRANCH"
+          echo "branch=$BRANCH" >> $GITHUB_ENV
+          git checkout $BRANCH
+
+      - name: Set version number (when publishing)
+        if: ${{ startsWith(github.ref_name, 'v') || startsWith(github.ref_name, '4') }}
+        run: |
+          python3 ${{ github.workspace }}/.github/update_version.py --version ${{ github.ref_name }}
+
+      - uses: dorny/paths-filter@v4
+        id: changes
+        with:
+          filters: |
+            man:
+              - 'man.md'
+            autotools:
+              - 'aclocal.m4'
+              - 'configure.ac'
+      - uses: docker://pandoc/core:3.3
+        if: ${{ github.event_name == 'workflow_dispath' || steps.changes.outputs.man == 'true' }}
+        with:
+          args: -s man.md -t man -o shc.1
+      - uses: docker://pandoc/core:3.3
+        if: ${{ github.event_name == 'workflow_dispath' || steps.changes.outputs.man == 'true' }}
+        with:
+          args: -s man.md -t html -o man.html
+      - run: |-
+          ./autogen.sh
+          # Correct executable flag on generated files
+          chmod -x INSTALL
+        if: ${{ github.event_name == 'workflow_dispath' || steps.changes.outputs.autotools == 'true' }}
+      - name: Commit changes
+        if: ${{ github.event_name == 'workflow_dispath' || steps.changes.outputs.man == 'true' || steps.changes.outputs.autotools || startsWith(github.ref, 'ref/tags/v') }}
+        run: |-
+          for r in $(git remote) ; do git remote get-url --all $r ; done
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git commit -a -m "ci: Github Action Generate Files"
+          git push
+
+      - name: Move tag on release
+        if: ${{ startsWith(github.ref, 'ref/tags/v') && ( github.event_name == 'workflow_dispath' || steps.changes.outputs.man == 'true' || steps.changes.outputs.autotools ) }}
+        run: |-
+          git tag -fa "${{ github.ref_name }}" -m "Update ${{ github.ref_name }} tag"
+          git push origin --force tag "${{ github.ref_name }}"

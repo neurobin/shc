@@ -5,20 +5,21 @@
 #
 IFS=":$IFS"
 
-for substring in $@
+for substring in "$@"
 do
-  for path in $PATH
-  do
-    for command in $path/*$substring*
+    for path in $PATH
     do
-      if [ -f $command ]
-      then
-        echo $command
-      fi
+        for command in "$path/"*"$substring"*
+        do
+            if [ -f "$command" ]
+            then
+                echo "$command"
+            fi
+        done
     done
-  done
 done
 
 # Added
 echo "[$$] PAUSED... Hit return!"
+# shellcheck disable=2162,2034
 read DUMMY

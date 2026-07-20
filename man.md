@@ -1,59 +1,66 @@
 % shc(1) shc user manual
 %
-% January 14, 2019
+% August 19, 2024
 <hr>
 
 # NAME
 shc - Generic shell script compiler
 
 # SYNOPSIS
-**shc** [ -e *date* ] [ -m *addr* ] [ -i *iopt* ] [ -x *cmnd* ] [ -l *lopt* ] [ -o *outfile* ] [ -ABCDhUHvSr ] -f *script* 
+**shc** \[ -e *DATE* \] \[ -m *MESSAGE* \] \[ -i *IOPT* \] \[ -x *CMD* \] \[ -l *LOPT* \] \[ -o *OUTFILE* \] \[ -2ABCDHpPSUhrv \] -f *SCRIPT* 
 
 # DESCRIPTION
 **shc** creates a stripped binary executable version of the script specified with `-f` on the command line.
 
-The binary version will get a `.x` extension appended by default if *outfile* is not defined with [-o *outfile*] option
+The binary version will get a `.x` extension appended by default if *OUTFILE* is not defined with [-o *OUTFILE*] option
 and will usually be a bit larger in size than the original ascii code.
 Generated C source code is saved in a file with the extension `.x.c` or in a file specified with appropriate option.
 
-If you supply an expiration date with the `-e` option, the compiled binary will refuse to run after the date specified. 
+If you provide an expiration DATE with the `-e` option, the compiled binary will refuse to run after the date specified. 
 The message **Please contact your provider** will be displayed instead. This message can be changed with the `-m` option.
 
 You can compile any kind of shell script, but you need to supply valid `-i`, `-x` and `-l` options.
 
-The compiled binary will still be dependent on the shell specified in the first line of the shell code (i.e. `#!/bin/sh`),
-thus **shc** does not create completely independent binaries.
+The compiled binary will still require the shell specified in the first line of the shell code (i.e. `#!/bin/sh`) to be available on the system,
+therefore **shc** does not create completely independent binaries, it mainly obfuscates the source script.
 
 **shc** itself is not a compiler such as cc, it rather encodes and encrypts a shell script and generates C source code with the added expiration capability. 
 It then uses the system compiler to compile a stripped binary which behaves exactly like the original script.
 Upon execution, the compiled binary will decrypt and execute the code with the shell `-c` option.
-Unfortunately, it will not give you any speed improvement as a real C program would.
+It will not give you any speed improvement as a real C program would.
 
 **shc**'s main purpose is to protect your shell scripts from modification or inspection.
 You can use it if you wish to distribute your scripts but don't want them to be easily readable by other people.   
 
 # OPTIONS
 
--e *date*
+-e *DATE*
 : Expiration date in *dd/mm/yyyy* format `[none]`
 
--m *message*
+-m *MESSAGE*
 : message to display upon expiration `["Please contact your provider"]`
 
--f *script_name*
+-f *SCRIPT*
 : File path of the script to compile 
 
--i *inline_option*
+-P
+: Use a pipe to feed the script, with ARGV fixes.  Enabled automatically
+  for `python`, `perl` and `csh`.
+
+-p
+: Use a pipe to feed the script, without ARGV fixing.
+
+-i *IOPT*
 : Inline option for the shell interpreter i.e: `-e`
 
--x *command*
+-x *CMD*
 : eXec command, as a printf format i.e: `exec(\\'%s\\',@ARGV);` 
 
--l *last_option*
+-l *LOPT*
 : Last shell option i.e: `--` 
 
--o *outfile*
-: output to the file specified by outfile 
+-o *OUTFILE*
+: output to the file specified by OUTFILE
 
 -r
 : Relax security. Make a redistributable binary which executes on different systems running the same operating system. You can release your binary with this option for others to use 
@@ -62,22 +69,25 @@ You can use it if you wish to distribute your scripts but don't want them to be 
 : Verbose compilation 
 
 -S
-: Switch ON setuid for root callable programs [OFF]
+: Enable setuid for root callable programs
 
 -D
-: Switch on debug exec calls 
+: Enable debug (show exec calls, etc.)
 
 -U
-: Make binary to be untraceable (using *strace*, *ptrace*, *truss*, etc.) 
+: Make binary execution untraceable (using *strace*, *ptrace*, *truss*, etc.) 
 
 -H
-: Hardening. Extra security flag without root access requirement that protects against dumping, code injection, `cat /proc/pid/cmdline`, ptrace, etc.. This feature is **experimental** and may not work on all systems. it require bourne shell (sh) scripts
+: Hardening. Extra security flag without root access requirement that protects against dumping, code injection, `cat /proc/pid/cmdline`, `ptrace`, etc...  This feature is **experimental** and may not work on all systems. it requires bourne shell (sh) scripts
 
 -C
 : Display license and exit 
 
 -A
 : Display abstract and exit 
+
+-2
+: Use `mmap2` system call.
 
 -B
 : Compile for BusyBox 
@@ -87,6 +97,9 @@ You can use it if you wish to distribute your scripts but don't want them to be 
 
 
 # ENVIRONMENT VARIABLES
+
+These can be used to provide options to the GCC Compiler.
+Examples: static compilation, machine architecture, sanitize options.
 
 CC
 : C compiler command `[cc]`
@@ -120,11 +133,12 @@ shc -Hf myscript -o mybinary
 # LIMITATIONS
 The maximum size of the script that could be executed once compiled is limited by the operating system configuration parameter `_SC_ARG_MAX` (see sysconf(2))
 
-# AUTHORS
-Francisco Rosales <frosal@fi.upm.es>
+# MAIN AUTHORS
 
+Francisco Rosales <frosal@fi.upm.es>
 Md Jahidul Hamid <jahidulhamid@yahoo.com>
 
-# REPORT BUGS TO
-https://github.com/neurobin/shc/issues 
+Note: Do not contact them, they are no longer actively involved
 
+# REPORT BUGS TO
+https://github.com/NextSHC/shc/issues 

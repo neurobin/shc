@@ -1,5 +1,26 @@
 CHANGES
 
+LATEST Aug 19 2024
+
+    * Feat: Piping (`-P`, `-p`), with `$0` forging (big scripts, perl. python) @fabio-brugnara.
+    * Qual: Enhance tests (Check stderr, forging, tempdir, complex arguments), option SKIP (tests) @mdeweerd.
+    * Qual: Add Github CI flox (build, run tests with(out) sanitizer, generate files) @mdeweerd.
+    * Fix:  Fix memory leaks in generated c-code @mdeweerd.
+    * Fix:  Fix memory leaks in generation c-code @ashamedbit #165
+    * Fix:  Fix static code checks/implement recommendations (prevent leaks, overflows) @mdeweerd.
+    * Qual: Add static code checks, linting, code formatting @mdeweerd #162 #161
+    * Doc:  Improvements to the documentation @mdeweerd #163 #160
+    * Doc:  Add code block hinting for Ubuntu PPA install procedure lb803 #164
+    * Feat: Remove `ash` dependency @dviererbe #167
+    * Fix:  Fix for script filenames with spaces/special characters @ergoucao #157.
+    * Feat: Option `-2` to use mmap2 @csersoft #132
+    * Doc:  Fix automatic hyperlinks by removing `<>` @learnpassword #148
+    * Doc:  Fix typo in usage @ghost #129
+    * Fix:  Fix strip in case of cross-compilation @embexus #125
+    * Fix:  Fix NULL-ptr dereference in shhl string @RKX1209 #83
+
+    Note: @GITHUB_USERNAME #neurobin/Github Pull Request
+
 4.0.3 Tue Nov 20 08:22:20 UTC 2018
 
     * Enhance -H flag by intika <https://github.com/intika> (Hide commands arguments from ps and cmdline)
@@ -44,29 +65,29 @@ CHANGES
 
     * zsh support
     * Fix issue #13 (https://github.com/neurobin/shc/issues/13)
-    
+
 
 3.9.2	Fri Aug 21 16:12:33 BDT 2015
-	
+
 	Added BusyBox support with patch taken from:
 	https://onedrive.live.com/prev?cid=18a41d08a9f3c543&id=18A41D08A9F3C543!231&authkey=!AJQ6Iah_5D3WJ60&v=TextFileEditor
 	as suggested by https://github.com/marcoburatto
 
 3.9.1	Fri Apr 03 00:22:11 GMT 2015
-	
+
 	Renamed  option -T to -U and reversed it's logic.
 	So now, the executable prepared will execute without using sudo,
 	by default.
 
 
-3.9.0   Wed Apr 01  08:35:22 AM GMT 2015 
+3.9.0   Wed Apr 01  08:35:22 AM GMT 2015
 
     (http://github.com/neurobin)
 	Added output file option with [-o filename]
 	and fixed bug on make install (manual install failed)
 	Now you can access manual by entering command: man shc
 	in a terminal.
-        
+
 
 
 3.8.9	Wed Apr 25 09:24:25 CEST 2012
@@ -122,8 +143,8 @@ CHANGES
 	- Fixed bug: "rlax" used after encryption.
 
 	Thanks to Nalneesh Gaur <Nalneesh.Gaur@accenture.com> for:
-	- Read permision of the script.x exposes it to disassembling.
-	- Group and others read permision is now removed by default.
+	- Read permission of the script.x exposes it to disassembling.
+	- Group and others read permission is now removed by default.
 
 
 
@@ -227,16 +248,15 @@ SCO, both not used now.
 3.0b1	Wed Feb 26 14:27:22 WET 1997
 
 	The main difference with 2.4 is that in it the script was
-compressed an then shuffle around, now int 3.0 the script is encripted
-with an inline code, so not needend any external comand to work, and been
-faster at startup. Other related adventage is that the only information
-not encripted in .x.c is an stamp, expiration date and provider email
+compressed an then shuffle around, now int 3.0 the script is encrypted
+with an inline code, so not needing any external command to work, and been
+faster at startup. Other related advantage is that the only information
+not encrypted in .x.c is an stamp, expiration date and provider email
 address.
 
-	Something equivalent to cheksums have been used to enforced at
+	Something equivalent to checksums has been used to enforce at
 execution that the executing shell has not been modified from the time
-the script was compiled. If anybody tries to change the excuting shell,
+the script was compiled. If anybody tries to change the executing shell,
 .x will refuse to execute.
 
 	The generated .x.c source code is now readable.
-

@@ -1,0 +1,20 @@
+version: 2
+
+multi-ecosystem-groups:
+  infrastructure:
+    schedule:
+      interval: "weekly"
+
+# 'package-ecosystem' values: npm, bundler, composer, devcontainers, dotnet-sdk, maven, mix, cargo, gradle, nuget, gomod, docker, docker-compose, elm, gitsubmodule, github-actions, pip, terraform, pub, rust-toolchain, sbt, swift, bun, uv, vcpkg, helm, conda, julia, bazel, opentofu, pre-commit, nix, denoo
+updates:
+  - package-ecosystem: "pre-commit"
+    directory: "/"
+    patterns: ["*"]
+    #patterns: ["nginx", "redis", "postgres"]
+    multi-ecosystem-group: "infrastructure"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    patterns: ["*"]
+    #patterns: ["aws", "terraform-*"]
+    multi-ecosystem-group: "infrastructure"

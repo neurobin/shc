@@ -1,0 +1,103 @@
+---
+exclude:
+  (?x)^(
+  configure|
+  configure\..*|
+  .cache/.*|
+  .*Makefile.in|
+  .*Makefile.am|
+  autogen.sh|
+  config/install-sh|
+  config/depcomp|
+  config/compile|
+  config/missing|
+  aclocal.m4|
+  __NONE__)$
+repos:
+  - repo: https://github.com/executablebooks/mdformat
+    # Do this before other tools "fixing" the line endings
+    rev: 2d496dbc18e31b83a1596685347ffe0b6041daf0  # 1.0.0
+    hooks:
+      - id: mdformat
+        name: Format Markdown
+        stages: [manual]
+        entry: mdformat  # Executable to run, with fixed options
+        language: python
+        types: [markdown]
+        args: [--wrap, '75', --number]
+        additional_dependencies:
+          - mdformat-toc
+          - mdformat-gfm
+          - mdformat-beautysh
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c  # v6.0.0
+    hooks:
+      # - id: no-commit-to-branch
+      #  args: [--branch, main]
+      - id: debug-statements
+      - id: end-of-file-fixer
+        exclude: ^(test/.*)$
+      - id: trailing-whitespace
+        exclude: .*\.md$
+      - id: check-json
+      - id: mixed-line-ending
+      - id: check-builtin-literals
+        args: [--ignore=dict]
+      - id: check-ast
+      - id: check-merge-conflict
+      - id: check-executables-have-shebangs
+      - id: check-shebang-scripts-are-executable
+        exclude: ^(test/.*)$
+      - id: check-docstring-first
+      - id: fix-byte-order-marker
+      - id: check-case-conflict
+      - id: check-toml
+  - repo: https://github.com/lovesegfault/beautysh.git
+    rev: 885128fe2600889194c69fa19326cf55a3462777  # v6.4.3
+    hooks:
+      - id: beautysh
+        exclude: (?x)^(test/test\..*|config/missing|configure|autogen.sh)$
+        additional_dependencies:
+          - setuptools
+  - repo: https://github.com/codespell-project/codespell
+    rev: 2ccb47ff45ad361a21071a7eedda4c37e6ae8c5a  # v2.4.2
+    hooks:
+      - id: codespell
+        args:
+          - --toml
+          - pyproject.toml
+        additional_dependencies:
+          - tomli
+  #- repo: https://github.com/pocc/pre-commit-hooks
+  #  rev: 8387cd298d01468479e7e52429ca8c95ed9546ef  # v1.3.5
+  - repo: https://github.com/mdeweerd/pre-commit-hooks
+    rev:  1b4abb7690690e68642195c7cfec5efc8d647af9  # v1.3.5 - corrected for cppcheck cache
+    # Install dependencies on windows:
+    #  choco install llvm uncrustify cppcheck
+    hooks:
+      - id: uncrustify
+        args: [--replace, --no-backup, -c, uncrustify.cfg]
+      - id: cppcheck
+        args:
+          - --force
+          #- --std=c99
+          - --language=c
+          #- -IInc
+          - '--template={file}({line}): {severity} ({id}): {message}'
+          - --inline-suppr
+      - id: cpplint
+        args: ["--filter=-build/header_guard,-build/include,-build/include_subdir,-legal/copyright,-readability/casting,-readability/fn_size,-whitespace/blank_line,-whitespace/braces,-whitespace/comma,-whitespace/comments,-whitespace/line_length,-whitespace/newline,-whitespace/operators,-whitespace/parens,-whitespace/semicolon,-whitespace/tab,-whitespace/todo"]
+        additional_dependencies:
+          - cpplint>=2.0.2
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: 745eface02aef23e168a8afb6b5737818efbea95  # v0.11.0.1
+    hooks:
+      - id: shellcheck
+        exclude: (?x)^(test/test.*)$
+        # args: [-x,-e1007,-e1009,-e1072,-e1073]
+  - repo: https://github.com/pocc/pre-commit-hooks
+    rev: 8387cd298d01468479e7e52429ca8c95ed9546ef  # v1.3.5
+    hooks:
+      - id: clang-format
+        stages: [manual]
+        args: [-i]

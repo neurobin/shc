@@ -17,3 +17,7 @@ config.status
 a.out
 *.x
 *.x.c
+
+config/config.guess
+config/config.sub
+*~
