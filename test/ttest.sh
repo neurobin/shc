@@ -14,6 +14,9 @@ txtrst='\e[0m'    # Text Reset
 stat=0
 pc=0
 fc=0
+if ! /bin/bash "$(dirname "$0")/filenames.sh" "$shc"; then
+    exit 1
+fi
 echo
 echo "== Running tests ..."
 for shell in ${shells[@]}; do
