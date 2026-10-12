@@ -1012,6 +1012,7 @@ int eval_shell(char * text)
 {
 	int i;
 	char * ptr;
+	const char * shell_name;
 
 	ptr = strchr(text, (int)'\n');
 	if (!ptr)
@@ -1044,8 +1045,10 @@ int eval_shell(char * text)
 		ptr++;
 	if (verbose) fprintf(stderr, "%s shll=%s\n", my_name, ptr);
 
+	/* Share Bash's defaults while retaining the actual interpreter in shll. */
+	shell_name = !strcmp(ptr, "bash-static") ? "bash" : ptr;
 	for(i=0; shellsDB[i].shll; i++) {
-		if(!strcmp(ptr, shellsDB[i].shll)) {
+		if(!strcmp(shell_name, shellsDB[i].shll)) {
 			if (!inlo)
 				inlo = strdup(shellsDB[i].inlo);
 			if (!xecc)
