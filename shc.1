@@ -16,8 +16,8 @@ The binary version will get a \f[C]\&.x\f[] extension appended by
 default if \f[I]outfile\f[] is not defined with [\-o \f[I]outfile\f[]]
 option and will usually be a bit larger in size than the original ascii
 code.
-Generated C source code is saved in a file with the extension
-\f[C]\&.x.c\f[] or in a file specified with appropriate option.
+Generated C source code is saved as \f[C]script.x.c\f[] by default, or as
+\f[C]outfile.c\f[] when \f[C]\-o outfile\f[] is specified.
 .PP
 If you supply an expiration date with the \f[C]\-e\f[] option, the
 compiled binary will refuse to run after the date specified.
@@ -65,7 +65,9 @@ i.e: \f[C]\-e\f[]
 .PP
 \-l \f[I]last_option\f[] : Last shell option i.e: \f[C]\-\-\f[]
 .PP
-\-o \f[I]outfile\f[] : output to the file specified by outfile
+\-o \f[I]outfile\f[] : Save the executable as \f[I]outfile\f[] and the
+generated C source as \f[I]outfile\f[] with \f[C]\&.c\f[] appended.
+The output directory must already exist.
 .PP
 \-r : Relax security.
 Make a redistributable binary which executes on different systems

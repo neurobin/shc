@@ -14,7 +14,7 @@ shc - Generic shell script compiler
 
 The binary version will get a `.x` extension appended by default if *outfile* is not defined with [-o *outfile*] option
 and will usually be a bit larger in size than the original ascii code.
-Generated C source code is saved in a file with the extension `.x.c` or in a file specified with appropriate option.
+Generated C source code is saved as `script.x.c` by default, or as `outfile.c` when `-o outfile` is specified.
 
 If you supply an expiration date with the `-e` option, the compiled binary will refuse to run after the date specified. 
 The message **Please contact your provider** will be displayed instead. This message can be changed with the `-m` option.
@@ -53,7 +53,7 @@ You can use it if you wish to distribute your scripts but don't want them to be 
 : Last shell option i.e: `--` 
 
 -o *outfile*
-: output to the file specified by outfile 
+: Save the executable as *outfile* and the generated C source as *outfile* with `.c` appended. The output directory must already exist.
 
 -r
 : Relax security. Make a redistributable binary which executes on different systems running the same operating system. You can release your binary with this option for others to use 

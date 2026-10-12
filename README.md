@@ -40,6 +40,11 @@ shc -U -f script.sh -o binary # Untraceable binary (prevent strace, ptrace etc..
 shc -H -f script.sh -o binary # Untraceable binary, does not require root (only bourne shell (sh) scripts with no parameter)
 ```
 
+With `-o build/tool`, the executable is saved as `build/tool` and the generated C
+source as `build/tool.c`. The output directory must already exist. Without `-o`,
+the names remain `script.sh.x` and `script.sh.x.c`. Earlier versions always saved
+the C source beside the input script, even when `-o` selected another location.
+
 ## The hardening flag -H
 
 This flag is currently in an experimental state and may not work in all systems. This flag only works for **default** shell. For example, if you compile a **bash** script with `-H` flag then the resultant executable will only work in systems where the default shell is **bash**. You may change the default shell which generally is `/bin/sh` which further is just a link to another shell like bash or dash etc.
