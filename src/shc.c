@@ -699,10 +699,13 @@ static const char * RTC[] = {
 "		memcpy(&scrpt[hide_z], text, text_z);",
 "	} else {			/* Reexecute */",
 "		if (*xecc) {",
-"			scrpt = malloc(512);",
+"			i = snprintf(NULL, 0, xecc, me);",
+"			if (i < 0)",
+"				return 0;",
+"			scrpt = malloc((size_t)i + 1);",
 "			if (!scrpt)",
 "				return 0;",
-"			sprintf(scrpt, xecc, me);",
+"			snprintf(scrpt, (size_t)i + 1, xecc, me);",
 "		} else {",
 "			scrpt = me;",
 "		}",
@@ -992,19 +995,20 @@ struct {
 	char * lsto;
 	char * xecc;
 } shellsDB[] = {
-	{ "perl", "-e", "--", "exec('%s',@ARGV);" },
-	{ "rc",   "-c", "",   "builtin exec %s $*" },
-	{ "sh",   "-c", "",   "exec '%s' \"$@\"" }, /* IRIX_nvi */
-	{ "dash", "-c", "",   "exec '%s' \"$@\"" },
-	{ "bash", "-c", "",   "exec '%s' \"$@\"" },
-	{ "zsh",  "-c", "",   "exec '%s' \"$@\"" },
-	{ "bsh",  "-c", "",   "exec '%s' \"$@\"" }, /* AIX_nvi */
-	{ "Rsh",  "-c", "",   "exec '%s' \"$@\"" }, /* AIX_nvi */
-	{ "ksh",  "-c", "",   "exec '%s' \"$@\"" }, /* OK on Solaris, AIX and Linux (THX <bryan.hogan@dstintl.com>) */
-	{ "tsh",  "-c", "--", "exec '%s' \"$@\"" }, /* AIX */
-	{ "ash",  "-c", "--", "exec '%s' \"$@\"" }, /* Linux */
-	{ "csh",  "-c", "-b", "exec '%s' $argv" }, /* AIX: No file for $0 */
-	{ "tcsh", "-c", "-b", "exec '%s' $argv" },
+	/* Reexecute using arguments, never by interpolating the filename as code. */
+	{ "perl", "-e", "--", "exec($ARGV[0],@ARGV);" },
+	{ "rc",   "-c", "",   "builtin exec $1 $*" },
+	{ "sh",   "-c", "",   "exec \"$0\" \"$@\"" }, /* IRIX_nvi */
+	{ "dash", "-c", "",   "exec \"$0\" \"$@\"" },
+	{ "bash", "-c", "",   "exec \"$0\" \"$@\"" },
+	{ "zsh",  "-c", "",   "exec \"$0\" \"$@\"" },
+	{ "bsh",  "-c", "",   "exec \"$0\" \"$@\"" }, /* AIX_nvi */
+	{ "Rsh",  "-c", "",   "exec \"$0\" \"$@\"" }, /* AIX_nvi */
+	{ "ksh",  "-c", "",   "exec \"$0\" \"$@\"" }, /* OK on Solaris, AIX and Linux (THX <bryan.hogan@dstintl.com>) */
+	{ "tsh",  "-c", "--", "exec \"$0\" \"$@\"" }, /* AIX */
+	{ "ash",  "-c", "--", "exec \"$0\" \"$@\"" }, /* Linux */
+	{ "csh",  "-c", "-b", "exec $argv[1]:q $argv:q" }, /* AIX: No file for $0 */
+	{ "tcsh", "-c", "-b", "exec $argv[1]:q $argv:q" },
 	{ NULL,   NULL, NULL, NULL },
 };
 
@@ -1253,8 +1257,20 @@ int write_C(char * file, char * argv[])
 	fprintf(o, "#if 0\n");
 	fprintf(o, "\t%s %s, %s\n", my_name, version, subject);
 	fprintf(o, "\t%s %s %s %s\n\n\t", cpright, provider.f, provider.s, provider.e);
-	for (indx = 0; argv[indx]; indx++)
-		fprintf(o, "%s ", argv[indx]);
+	for (indx = 0; argv[indx]; indx++) {
+		const unsigned char *arg = (unsigned char *)argv[indx];
+		/* Keep filenames from introducing directives or line continuations. */
+		fputc('"', o);
+		for (; *arg; arg++) {
+			if (*arg == '"' || *arg == '\\')
+				fputc('\\', o);
+			if (*arg < ' ' || *arg >= 127)
+				fprintf(o, "\\%03o", *arg);
+			else
+				fputc(*arg, o);
+		}
+		fputs("\" ", o);
+	}
 	fprintf(o, "\n#endif\n\n");
 	fprintf(o, "static  char data [] = ");
 	do {
@@ -1297,10 +1313,67 @@ int write_C(char * file, char * argv[])
 	return 0;
 }
 
+/* Quote filenames, leaving the shell syntax of tool settings unchanged. */
+static char * quote_file(const char *name)
+{
+	size_t len = strlen(name);
+	char *quoted, *p;
+
+	if (len > ((size_t)-1 - 5) / 4) {
+		errno = ENOMEM;
+		return NULL;
+	}
+	quoted = malloc(4 * len + 5);
+	if (!quoted)
+		return NULL;
+	p = quoted;
+	*p++ = '\'';
+	/* A quoted leading dash is still an option to cc or strip. */
+	if (*name == '-') {
+		*p++ = '.';
+		*p++ = '/';
+	}
+	for (; *name; name++) {
+		if (*name == '\'') {
+			memcpy(p, "'\\''", 4);
+			p += 4;
+		} else {
+			*p++ = *name;
+		}
+	}
+	*p++ = '\'';
+	*p = '\0';
+	return quoted;
+}
+
+static int run_command(const char *format, ...)
+{
+	va_list args;
+	char *cmd;
+	int len, status;
+
+	va_start(args, format);
+	len = vsnprintf(NULL, 0, format, args);
+	va_end(args);
+	if (len < 0)
+		return -1;
+	cmd = malloc((size_t)len + 1);
+	if (!cmd)
+		return -1;
+	va_start(args, format);
+	vsnprintf(cmd, (size_t)len + 1, format, args);
+	va_end(args);
+	if (verbose) fprintf(stderr, "%s: %s\n", my_name, cmd);
+	status = system(cmd);
+	free(cmd);
+	return status;
+}
+
 int make(void)
 {
-	char * cc, * cflags, * ldflags;
-	char cmd[SIZE];
+	char *cc, *cflags, *ldflags, *strip;
+	char *source = NULL, *output = NULL;
+	int status = -1;
 
 	cc = getenv("CC");
 	if (!cc)
@@ -1312,29 +1385,32 @@ int make(void)
 	if (!ldflags)
 		ldflags = "";
 
-if(!file2){
-file2=(char*)realloc(file2,strlen(file)+3);
-strcpy(file2,file);
-file2=strcat(file2,".x");
-
-}
-	sprintf(cmd, "%s %s %s %s.x.c -o %s", cc, cflags, ldflags, file, file2);
-	if (verbose) fprintf(stderr, "%s: %s\n", my_name, cmd);
-	if (system(cmd))
-		return -1;
-	char* strip = getenv("STRIP");
+	if (!file2) {
+		file2 = malloc(strlen(file) + 3);
+		if (!file2)
+			return -1;
+		strcpy(file2, file);
+		strcat(file2, ".x");
+	}
+	source = quote_file(file);
+	output = quote_file(file2);
+	if (!source || !output)
+		goto out;
+	if (run_command("%s %s %s %s.x.c -o %s", cc, cflags, ldflags, source, output))
+		goto out;
+	strip = getenv("STRIP");
 	if (!strip)
 		strip = "strip";
-	sprintf(cmd, "%s %s", strip, file2);
-	if (verbose) fprintf(stderr, "%s: %s\n", my_name, cmd);
-	if (system(cmd))
+	if (run_command("%s %s", strip, output))
 		fprintf(stderr, "%s: never mind\n", my_name);
-	sprintf(cmd, "chmod ug=rwx,o=rx %s", file2);
-	if (verbose) fprintf(stderr, "%s: %s\n", my_name, cmd);
-	if (system(cmd))
+	if (verbose) fprintf(stderr, "%s: chmod ug=rwx,o=rx %s\n", my_name, output);
+	if (chmod(file2, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH))
 		fprintf(stderr, "%s: remove read permission\n", my_name);
-
-	return 0;
+	status = 0;
+out:
+	free(source);
+	free(output);
+	return status;
 }
 
 void do_all(int argc, char * argv[])
