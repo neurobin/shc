@@ -1005,8 +1005,9 @@ struct {
 	{ "bsh",  "-c", "",   "exec \"$0\" \"$@\"" }, /* AIX_nvi */
 	{ "Rsh",  "-c", "",   "exec \"$0\" \"$@\"" }, /* AIX_nvi */
 	{ "ksh",  "-c", "",   "exec \"$0\" \"$@\"" }, /* OK on Solaris, AIX and Linux (THX <bryan.hogan@dstintl.com>) */
-	{ "tsh",  "-c", "--", "exec \"$0\" \"$@\"" }, /* AIX */
-	{ "ash",  "-c", "--", "exec \"$0\" \"$@\"" }, /* Linux */
+	/* With lsto="--", the executable is $1 rather than $0. */
+	{ "tsh",  "-c", "--", "exec \"$1\" \"$@\"" }, /* AIX */
+	{ "ash",  "-c", "--", "exec \"$1\" \"$@\"" }, /* Linux */
 	{ "csh",  "-c", "-b", "exec $argv[1]:q $argv:q" }, /* AIX: No file for $0 */
 	{ "tcsh", "-c", "-b", "exec $argv[1]:q $argv:q" },
 	{ NULL,   NULL, NULL, NULL },

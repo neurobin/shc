@@ -34,8 +34,13 @@ check_binary() {
     count=$((count + 1))
 }
 
+# Exercise lsto="--" re-execution even where ash and tsh are not installed.
+mkdir aliases
+ln -s /bin/sh aliases/ash
+ln -s /bin/sh aliases/tsh
 for shell in /bin/sh /bin/dash /bin/bash /bin/ash /bin/ksh /bin/zsh \
-             /bin/csh /bin/tcsh /usr/bin/rc /usr/bin/perl; do
+             /bin/csh /bin/tcsh /usr/bin/rc /usr/bin/perl \
+             "$tmpd/aliases/ash" "$tmpd/aliases/tsh"; do
     [ -x "$shell" ] || continue
     printf '#!%s\n' "$shell" > script
     case "$shell" in
