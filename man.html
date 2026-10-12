@@ -42,10 +42,35 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <p><strong>shc</strong> creates a stripped binary executable version of the script specified with <code>-f</code> on the command line.</p>
 <p>The binary version will get a <code>.x</code> extension appended by default if <em>outfile</em> is not defined with [-o <em>outfile</em>] option and will usually be a bit larger in size than the original ascii code. Generated C source code is saved in a file with the extension <code>.x.c</code> or in a file specified with appropriate option.</p>
 <p>If you supply an expiration date with the <code>-e</code> option, the compiled binary will refuse to run after the date specified. The message <strong>Please contact your provider</strong> will be displayed instead. This message can be changed with the <code>-m</code> option.</p>
-<p>You can compile any kind of shell script, but you need to supply valid <code>-i</code>, <code>-x</code> and <code>-l</code> options.</p>
+<p>Interpreter selection and built-in defaults are described under SCRIPT INTERPRETERS.</p>
 <p>The compiled binary will still be dependent on the shell specified in the first line of the shell code (i.e. <code>#!/bin/sh</code>), thus <strong>shc</strong> does not create completely independent binaries.</p>
 <p><strong>shc</strong> itself is not a compiler such as cc, it rather encodes and encrypts a shell script and generates C source code with the added expiration capability. It then uses the system compiler to compile a stripped binary which behaves exactly like the original script. Upon execution, the compiled binary will decrypt and execute the code with the shell <code>-c</code> option. Unfortunately, it will not give you any speed improvement as a real C program would.</p>
 <p><strong>shc</strong>'s main purpose is to protect your shell scripts from modification or inspection. You can use it if you wish to distribute your scripts but don't want them to be easily readable by other people.</p>
+<h1 id="script-interpreters">SCRIPT INTERPRETERS</h1>
+<p>Use a shebang that names the interpreter directly, such as
+<code>#!/bin/bash</code> or <code>#!/bin/sh</code>. To find Bash on your
+system, run <code>command -v bash</code> and use the absolute path it
+prints after <code>#!</code> on the first line of the script. For
+example, if it prints <code>/bin/bash</code>:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">printf</span> <span class="st">&#39;Hello, world!\n&#39;</span></span></code></pre></div>
+<p><code>#!/usr/bin/env bash</code> is not supported by automatic
+interpreter detection: <strong>shc</strong> recognizes <code>env</code>
+as the interpreter and reports <code>Unknown shell (env)</code> rather
+than looking up Bash through <code>PATH</code>. The compiled program
+still needs the interpreter at the path specified in the shebang when it
+runs.</p>
+<p>Built-in defaults are available for the interpreter names
+<code>sh</code>, <code>dash</code>, <code>bash</code>, <code>zsh</code>,
+<code>bsh</code>, <code>Rsh</code>, <code>ksh</code>, <code>tsh</code>,
+<code>ash</code>, <code>csh</code>, <code>tcsh</code>, <code>rc</code>,
+and <code>perl</code>. These names are matched against the last
+component of the interpreter path; they are not a guarantee that every
+script or option works with every shell. Other interpreter names require
+suitable <code>-i</code>, <code>-x</code>, and <code>-l</code> options.
+The experimental <code>-H</code> mode has additional restrictions
+described under OPTIONS.</p>
 <h1 id="options">OPTIONS</h1>
 <p>-e <em>date</em> : Expiration date in <em>dd/mm/yyyy</em> format <code>[none]</code></p>
 <p>-m <em>message</em> : message to display upon expiration <code>[&quot;Please contact your provider&quot;]</code></p>

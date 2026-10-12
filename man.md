@@ -19,7 +19,7 @@ Generated C source code is saved in a file with the extension `.x.c` or in a fil
 If you supply an expiration date with the `-e` option, the compiled binary will refuse to run after the date specified. 
 The message **Please contact your provider** will be displayed instead. This message can be changed with the `-m` option.
 
-You can compile any kind of shell script, but you need to supply valid `-i`, `-x` and `-l` options.
+Interpreter selection and built-in defaults are described under SCRIPT INTERPRETERS.
 
 The compiled binary will still be dependent on the shell specified in the first line of the shell code (i.e. `#!/bin/sh`),
 thus **shc** does not create completely independent binaries.
@@ -31,6 +31,30 @@ Unfortunately, it will not give you any speed improvement as a real C program wo
 
 **shc**'s main purpose is to protect your shell scripts from modification or inspection.
 You can use it if you wish to distribute your scripts but don't want them to be easily readable by other people.   
+
+# SCRIPT INTERPRETERS
+
+Use a shebang that names the interpreter directly, such as `#!/bin/bash` or
+`#!/bin/sh`. To find Bash on your system, run `command -v bash` and use the
+absolute path it prints after `#!` on the first line of the script. For example,
+if it prints `/bin/bash`:
+
+```bash
+#!/bin/bash
+printf 'Hello, world!\n'
+```
+
+`#!/usr/bin/env bash` is not supported by automatic interpreter detection: **shc**
+recognizes `env` as the interpreter and reports `Unknown shell (env)` rather
+than looking up Bash through `PATH`. The compiled program still needs the
+interpreter at the path specified in the shebang when it runs.
+
+Built-in defaults are available for the interpreter names `sh`, `dash`, `bash`,
+`zsh`, `bsh`, `Rsh`, `ksh`, `tsh`, `ash`, `csh`, `tcsh`, `rc`, and `perl`.
+These names are matched against the last component of the interpreter path;
+they are not a guarantee that every script or option works with every shell.
+Other interpreter names require suitable `-i`, `-x`, and `-l` options. The
+experimental `-H` mode has additional restrictions described under OPTIONS.
 
 # OPTIONS
 

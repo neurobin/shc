@@ -25,8 +25,7 @@ The message \f[B]Please contact your provider\f[] will be displayed
 instead.
 This message can be changed with the \f[C]\-m\f[] option.
 .PP
-You can compile any kind of shell script, but you need to supply valid
-\f[C]\-i\f[], \f[C]\-x\f[] and \f[C]\-l\f[] options.
+Interpreter selection and built-in defaults are described under SCRIPT INTERPRETERS.
 .PP
 The compiled binary will still be dependent on the shell specified in
 the first line of the shell code (i.e.
@@ -47,6 +46,38 @@ program would.
 modification or inspection.
 You can use it if you wish to distribute your scripts but don\[aq]t want
 them to be easily readable by other people.
+.SH SCRIPT INTERPRETERS
+Use a shebang that names the interpreter directly, such as
+\f[CR]#!/bin/bash\f[R] or \f[CR]#!/bin/sh\f[R].
+To find Bash on your system, run \f[CR]command \-v bash\f[R] and use the
+absolute path it prints after \f[CR]#!\f[R] on the first line of the
+script.
+For example, if it prints \f[CR]/bin/bash\f[R]:
+.IP
+.EX
+\f[I]#!/bin/bash\f[R]
+printf \(aqHello, world!\(rsn\(aq
+.EE
+.PP
+\f[CR]#!/usr/bin/env bash\f[R] is not supported by automatic interpreter
+detection: \f[B]shc\f[R] recognizes \f[CR]env\f[R] as the interpreter
+and reports \f[CR]Unknown shell (env)\f[R] rather than looking up Bash
+through \f[CR]PATH\f[R].
+The compiled program still needs the interpreter at the path specified
+in the shebang when it runs.
+.PP
+Built\-in defaults are available for the interpreter names
+\f[CR]sh\f[R], \f[CR]dash\f[R], \f[CR]bash\f[R], \f[CR]zsh\f[R],
+\f[CR]bsh\f[R], \f[CR]Rsh\f[R], \f[CR]ksh\f[R], \f[CR]tsh\f[R],
+\f[CR]ash\f[R], \f[CR]csh\f[R], \f[CR]tcsh\f[R], \f[CR]rc\f[R], and
+\f[CR]perl\f[R].
+These names are matched against the last component of the interpreter
+path; they are not a guarantee that every script or option works with
+every shell.
+Other interpreter names require suitable \f[CR]\-i\f[R], \f[CR]\-x\f[R],
+and \f[CR]\-l\f[R] options.
+The experimental \f[CR]\-H\f[R] mode has additional restrictions
+described under OPTIONS.
 .SH OPTIONS
 .PP
 \-e \f[I]date\f[] : Expiration date in \f[I]dd/mm/yyyy\f[] format
