@@ -565,6 +565,7 @@ uninstall-am: uninstall-binPROGRAMS
 
 
 check: shc
+	/bin/bash "$(srcdir)/../test/runner.sh"
 	$(srcdir)/../test/ttest.sh ./shc
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
