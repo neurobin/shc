@@ -63,8 +63,8 @@ It limits the maximum length of the arguments to the exec function, limiting the
 
 ## Links
 
-1. [Man Page](http://neurobin.github.io/shc/man.html)
-2. [Web Page](http://neurobin.github.io/shc)
+1. [Man Page](https://github.com/neurobin/shc/blob/master/man.md)
+2. [Project Repository](https://github.com/neurobin/shc)
 
 # Contributing
 
