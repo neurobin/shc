@@ -40,6 +40,32 @@ shc -U -f script.sh -o binary # Untraceable binary (prevent strace, ptrace etc..
 shc -H -f script.sh -o binary # Untraceable binary, does not require root (only bourne shell (sh) scripts with no parameter)
 ```
 
+## Redistributing binaries with -r
+
+By default, shc binds the compiled script to metadata of the shell executable
+specified by its shebang. This metadata includes the shell file's inode, device,
+owner, group, size, and timestamps. If it changes, the compiled script can fail
+to decrypt correctly and print unreadable characters. This can happen after a
+shell update or when moving the binary to another machine or container, and on
+some systems after a reboot.
+
+Use `-r` when the binary needs to run independently of this shell-file metadata:
+
+```bash
+shc -r -f script.sh -o binary
+```
+
+The description "Relax security" means that `-r` skips using this metadata in
+the encryption key. The script remains encrypted in the generated binary, but
+it is no longer bound to that particular shell file. This option does not change
+the expiration date set with `-e` or the restrictions imposed by `-U` and `-H`.
+
+The target system still needs a compatible operating system, CPU architecture,
+and any shared libraries required by the binary. It must also provide the shell
+at the path specified by the shebang and the commands and files used by the
+script. `-r` does not bundle these dependencies or make a binary work across
+different operating systems. Test the binary on each intended target system.
+
 ## The hardening flag -H
 
 This flag is currently in an experimental state and may not work in all systems. This flag only works for **default** shell. For example, if you compile a **bash** script with `-H` flag then the resultant executable will only work in systems where the default shell is **bash**. You may change the default shell which generally is `/bin/sh` which further is just a link to another shell like bash or dash etc.
