@@ -40,6 +40,30 @@ shc -U -f script.sh -o binary # Untraceable binary (prevent strace, ptrace etc..
 shc -H -f script.sh -o binary # Untraceable binary, does not require root (only bourne shell (sh) scripts with no parameter)
 ```
 
+### Script interpreters
+
+Use a shebang that names the interpreter directly, such as `#!/bin/bash` or
+`#!/bin/sh`. To find Bash on your system, run `command -v bash` and use the
+absolute path it prints after `#!` on the first line of the script. For example,
+if it prints `/bin/bash`:
+
+```bash
+#!/bin/bash
+printf 'Hello, world!\n'
+```
+
+`#!/usr/bin/env bash` is not supported by automatic interpreter detection: shc
+recognizes `env` as the interpreter and reports `Unknown shell (env)` rather
+than looking up Bash through `PATH`. The compiled program still needs the
+interpreter at the path specified in the shebang when it runs.
+
+Built-in defaults are available for the interpreter names `sh`, `dash`, `bash`,
+`zsh`, `bsh`, `Rsh`, `ksh`, `tsh`, `ash`, `csh`, `tcsh`, `rc`, and `perl`.
+These names are matched against the last component of the interpreter path;
+they are not a guarantee that every script or option works with every shell.
+Other interpreter names require suitable `-i`, `-x`, and `-l` options. The
+experimental `-H` mode has additional restrictions described below.
+
 ## The hardening flag -H
 
 This flag is currently in an experimental state and may not work in all systems. This flag only works for **default** shell. For example, if you compile a **bash** script with `-H` flag then the resultant executable will only work in systems where the default shell is **bash**. You may change the default shell which generally is `/bin/sh` which further is just a link to another shell like bash or dash etc.
