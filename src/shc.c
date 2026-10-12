@@ -105,6 +105,7 @@ static const char * help[] = {
 
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/wait.h>
 #include <assert.h>
 #include <ctype.h>
 #include <errno.h>
@@ -1008,6 +1009,15 @@ struct {
 	{ NULL,   NULL, NULL, NULL },
 };
 
+/* Capture errno before reporting or cleaning up the failed operation. */
+static void report_errno(const char * operation, const char * path)
+{
+	int error = errno;
+
+	fprintf(stderr, "%s: %s%s%s: %s\n", my_name, operation,
+		path ? ": " : "", path ? path : "", strerror(error));
+}
+
 int eval_shell(char * text)
 {
 	int i;
@@ -1021,8 +1031,10 @@ int eval_shell(char * text)
 	ptr  = malloc(i + 1);
 	shll = malloc(i + 1);
 	opts = malloc(i + 1);
-	if (!ptr || !shll || !opts)
+	if (!ptr || !shll || !opts) {
+		report_errno("allocating shell information", NULL);
 		return -1;
+	}
 	strncpy(ptr, text, i);
 	ptr[i] = '\0';
 
@@ -1035,9 +1047,13 @@ int eval_shell(char * text)
 	free(ptr);
 
 	shll = realloc(shll, strlen(shll) + 1);
+	if (!shll) {
+		report_errno("allocating shell information", NULL);
+		return -1;
+	}
 	ptr  = strrchr(shll, (int)'/');
 	if (!ptr) {
-		fprintf(stderr, "%s: invalid shll\n", my_name);
+		fprintf(stderr, "%s: invalid shell path: %s\n", my_name, shll);
 		return -1;
 	}
 	if (*ptr == '/')
@@ -1052,6 +1068,10 @@ int eval_shell(char * text)
 				xecc = strdup(shellsDB[i].xecc);
 			if (!lsto)
 				lsto = strdup(shellsDB[i].lsto);
+			if (!inlo || !xecc || !lsto) {
+				report_errno("allocating shell options", NULL);
+				return -1;
+			}
 		}
 	}
 	if (!inlo || !xecc || !lsto) {
@@ -1063,6 +1083,10 @@ int eval_shell(char * text)
 	if (verbose) fprintf(stderr, "%s [-l]=%s\n", my_name, lsto);
 
 	opts = realloc(opts, strlen(opts) + 1);
+	if (!opts) {
+		report_errno("allocating shell options", NULL);
+		return -1;
+	}
 	if (*opts && !strcmp(opts, lsto)) {
 		fprintf(stderr, "%s opts=%s : Is equal to [-l]. Removing opts\n", my_name, opts);
 		*opts = '\0';
@@ -1077,28 +1101,48 @@ int eval_shell(char * text)
 char * read_script(char * file)
 {
 	FILE * i;
-	char * text;
+	char * text, * buffer;
 	int cnt, l;
 
 	text = malloc(SIZE);
-	if (!text)
+	if (!text) {
+		report_errno("allocating script buffer", file);
 		return NULL;
+	}
 	i = fopen(file, "r");
-	if (!i)
+	if (!i) {
+		report_errno("opening script", file);
+		free(text);
 		return NULL;
+	}
 	for (l = 0;;) {
-		text = realloc(text, l + SIZE);
-		if (!text)
-			return NULL;
+		buffer = realloc(text, l + SIZE);
+		if (!buffer) {
+			report_errno("allocating script buffer", file);
+			goto fail;
+		}
+		text = buffer;
 		cnt = fread(&text[l], 1, SIZE, i);
+		if (ferror(i)) {
+			report_errno("reading script", file);
+			goto fail;
+		}
 		if (!cnt)
 			break;
 		l += cnt;
 	}
-	fclose(i);
-	text = realloc(text, l + 1);
-	if (!text)
+	if (fclose(i)) {
+		report_errno("closing script", file);
+		free(text);
 		return NULL;
+	}
+	buffer = realloc(text, l + 1);
+	if (!buffer) {
+		report_errno("allocating script buffer", file);
+		free(text);
+		return NULL;
+	}
+	text = buffer;
 	text[l] = '\0';
 
 	/* Check current System ARG_MAX limit. */
@@ -1111,6 +1155,10 @@ char * read_script(char * file)
 		my_name, cnt, file, l);
 	}
 	return text;
+fail:
+	fclose(i);
+	free(text);
+	return NULL;
 }
 
 unsigned rand_mod(unsigned mod)
@@ -1232,9 +1280,8 @@ int write_C(char * file, char * argv[])
 	indx = !rlax[0];
 	arc4(rlax, rlax_z); numd++;
 	if (indx && key_with_file(kwsh)) {
-		fprintf(stderr, "%s: invalid file name: %s ", my_name, kwsh);
-		perror("");
-		exit(1);
+		report_errno("examining shell", kwsh);
+		return -1;
 	}
 	arc4(opts, opts_z); numd++;
 	arc4(text, text_z); numd++;
@@ -1246,9 +1293,8 @@ int write_C(char * file, char * argv[])
 	name = strcat(realloc(name, strlen(name)+5), ".x.c");
 	o = fopen(name, "w");
 	if (!o) {
-		fprintf(stderr, "%s: creating output file: %s ", my_name, name);
-		perror("");
-		exit(1);
+		report_errno("creating output file", name);
+		return -1;
 	}
 	fprintf(o, "#if 0\n");
 	fprintf(o, "\t%s %s, %s\n", my_name, version, subject);
@@ -1291,10 +1337,40 @@ int write_C(char * file, char * argv[])
 	fprintf(o, MMAP2_line, MMAP2_flag);
 	for (indx = 0; RTC[indx]; indx++)
 		fprintf(o, "%s\n", RTC[indx]);
-	fflush(o);
-	fclose(o);
+	/* Check both buffered writes and the final close before compiling. */
+	if (fflush(o) || ferror(o)) {
+		report_errno("writing output file", name);
+		fclose(o);
+		return -1;
+	}
+	if (fclose(o)) {
+		report_errno("closing output file", name);
+		return -1;
+	}
 
 	return 0;
+}
+
+static int run_command(const char * cmd)
+{
+	int status;
+
+	if (verbose) fprintf(stderr, "%s: %s\n", my_name, cmd);
+	status = system(cmd);
+	if (status == -1)
+		report_errno("running command", cmd);
+	else if (WIFEXITED(status) && WEXITSTATUS(status) == 0)
+		return 0;
+	else if (WIFEXITED(status))
+		fprintf(stderr, "%s: command exited with status %d: %s\n",
+			my_name, WEXITSTATUS(status), cmd);
+	else if (WIFSIGNALED(status))
+		fprintf(stderr, "%s: command terminated by signal %d: %s\n",
+			my_name, WTERMSIG(status), cmd);
+	else
+		fprintf(stderr, "%s: command failed (wait status %d): %s\n",
+			my_name, status, cmd);
+	return -1;
 }
 
 int make(void)
@@ -1314,51 +1390,48 @@ int make(void)
 
 if(!file2){
 file2=(char*)realloc(file2,strlen(file)+3);
+if (!file2) {
+	report_errno("allocating output filename", file);
+	return -1;
+}
 strcpy(file2,file);
 file2=strcat(file2,".x");
 
 }
 	sprintf(cmd, "%s %s %s %s.x.c -o %s", cc, cflags, ldflags, file, file2);
-	if (verbose) fprintf(stderr, "%s: %s\n", my_name, cmd);
-	if (system(cmd))
+	if (run_command(cmd))
 		return -1;
 	char* strip = getenv("STRIP");
 	if (!strip)
 		strip = "strip";
 	sprintf(cmd, "%s %s", strip, file2);
-	if (verbose) fprintf(stderr, "%s: %s\n", my_name, cmd);
-	if (system(cmd))
-		fprintf(stderr, "%s: never mind\n", my_name);
+	if (run_command(cmd))
+		fprintf(stderr, "%s: warning: could not strip output: %s\n", my_name, file2);
 	sprintf(cmd, "chmod ug=rwx,o=rx %s", file2);
-	if (verbose) fprintf(stderr, "%s: %s\n", my_name, cmd);
-	if (system(cmd))
-		fprintf(stderr, "%s: remove read permission\n", my_name);
+	if (run_command(cmd))
+		fprintf(stderr, "%s: warning: could not set output permissions: %s\n", my_name, file2);
 
 	return 0;
 }
 
-void do_all(int argc, char * argv[])
+int do_all(int argc, char * argv[])
 {
 	parse_args(argc, argv);
 	text = read_script(file);
 	if (!text)
-		return;
+		return 1;
 	if (eval_shell(text))
-		return;
+		return 1;
 	if (write_C(file, argv))
-		return;
+		return 1;
 	if (make())
-		return;
-	exit(0);
+		return 1;
+	return 0;
 }
 
 int main(int argc, char * argv[])
 {
 	putenv("LANG=");
-	do_all(argc, argv);
-	/* Return on error */
-	perror(argv[0]);
-	exit(1);
-	return 1;
+	return do_all(argc, argv);
 }
 
