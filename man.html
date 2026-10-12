@@ -40,7 +40,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <p><strong>shc</strong> [ -e <em>date</em> ] [ -m <em>addr</em> ] [ -i <em>iopt</em> ] [ -x <em>cmnd</em> ] [ -l <em>lopt</em> ] [ -o <em>outfile</em> ] [ -ABCDhUHsvSr ] -f <em>script</em></p>
 <h1 id="description">DESCRIPTION</h1>
 <p><strong>shc</strong> creates a stripped binary executable version of the script specified with <code>-f</code> on the command line.</p>
-<p>The binary version will get a <code>.x</code> extension appended by default if <em>outfile</em> is not defined with [-o <em>outfile</em>] option and will usually be a bit larger in size than the original ascii code. Generated C source code is saved in a file with the extension <code>.x.c</code> or in a file specified with appropriate option.</p>
+<p>The binary version will get a <code>.x</code> extension appended by default if <em>outfile</em> is not defined with [-o <em>outfile</em>] option and will usually be a bit larger in size than the original ascii code. Generated C source code is saved as <code>script.x.c</code> by default, or as <code>outfile.c</code> when <code>-o outfile</code> is specified.</p>
 <p>If you supply an expiration date with the <code>-e</code> option, the compiled binary will refuse to run after the date specified. The message <strong>Please contact your provider</strong> will be displayed instead. This message can be changed with the <code>-m</code> option.</p>
 <p>You can compile any kind of shell script, but you need to supply valid <code>-i</code>, <code>-x</code> and <code>-l</code> options.</p>
 <p>The compiled binary will still be dependent on the shell specified in the first line of the shell code (i.e. <code>#!/bin/sh</code>), thus <strong>shc</strong> does not create completely independent binaries.</p>
@@ -53,7 +53,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <p>-i <em>inline_option</em> : Inline option for the shell interpreter i.e: <code>-e</code></p>
 <p>-x <em>command</em> : eXec command, as a printf format i.e: <code>exec(\\'%s\\',@ARGV);</code></p>
 <p>-l <em>last_option</em> : Last shell option i.e: <code>--</code></p>
-<p>-o <em>outfile</em> : output to the file specified by outfile</p>
+<p>-o <em>outfile</em> : Save the executable as <em>outfile</em> and the generated C source as <em>outfile</em> with <code>.c</code> appended. The output directory must already exist.</p>
 <p>-r : Relax security. Make a redistributable binary which executes on different systems running the same operating system. You can release your binary with this option for others to use</p>
 <p>-v : Verbose compilation</p>
 <p>-S : Switch ON setuid for root callable programs [OFF]</p>
