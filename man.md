@@ -56,7 +56,24 @@ You can use it if you wish to distribute your scripts but don't want them to be 
 : output to the file specified by outfile 
 
 -r
-: Relax security. Make a redistributable binary which executes on different systems running the same operating system. You can release your binary with this option for others to use 
+
+: Relax security by disabling binding to the shell executable's file metadata.
+    By default, shc uses the shell file's inode, device, owner, group, size, and
+    timestamps in the encryption key. If this metadata changes, the compiled
+    script can fail to decrypt correctly and print unreadable characters. This
+    can happen after a shell update, when moving the binary to another machine
+    or container, or on some systems after a reboot.
+
+    Use `-r` when the binary needs to run independently of this metadata. The
+    script remains encrypted in the generated binary, but it is no longer bound
+    to that particular shell file. This option does not change the expiration
+    date set with `-e` or the restrictions imposed by `-U` and `-H`.
+
+    The target system still needs a compatible operating system, CPU
+    architecture, and any shared libraries required by the binary, as well as
+    the shell at the path specified by the shebang and the commands and files
+    used by the script. `-r` does not bundle these dependencies or make a binary
+    work across different operating systems. Test it on each intended target.
 
 -v
 : Verbose compilation 
@@ -99,10 +116,11 @@ LDFLAGS
  
 # EXAMPLES
 
-Compile a script which can be run on other systems with the trace option enabled (without `-U` flag):
+Compile a script for redistribution to compatible systems (see `-r` above),
+without the tracing restrictions of `-U`:
 
 ```bash
-shc -f myscript -o mybinary
+shc -r -f myscript -o mybinary
 ```
 
 Compile an untraceable binary:
