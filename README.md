@@ -54,6 +54,19 @@ make
 make check
 ```
 
+The tests discover `sh`, `dash`, `bash`, `ash`, `ksh`, `zsh`, `tcsh`, `csh`,
+and `rc` on `PATH`. Missing shells are reported as skipped; compilation or
+execution errors fail the run. A run with no available shells also fails.
+
+For CI or a specific set of interpreters, set `SHC_TEST_SHELLS` to a
+space-separated list of shell names or paths. Every listed shell is required,
+and an empty list is an error. For example:
+
+```bash
+SHC_TEST_SHELLS="sh bash tcsh" make check
+SHC_TEST_SHELLS="/bin/sh /bin/bash" make check
+```
+
 ## Known limitations
 
 The one (and I hope the only) limitation using shc is the _SC_ARG_MAX system configuration parameter.

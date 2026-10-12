@@ -8,6 +8,6 @@ script:
   - ./autogen.sh
   - ./configure
   - make
-  - make test
+  - SHC_TEST_SHELLS="sh dash bash ash ksh zsh tcsh csh rc" make test
 
 
