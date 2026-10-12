@@ -1079,6 +1079,7 @@ char * read_script(char * file)
 	FILE * i;
 	char * text;
 	int cnt, l;
+	long arg_max;
 
 	text = malloc(SIZE);
 	if (!text)
@@ -1102,13 +1103,14 @@ char * read_script(char * file)
 	text[l] = '\0';
 
 	/* Check current System ARG_MAX limit. */
-	if (l > 0.80 * (cnt = sysconf(_SC_ARG_MAX))) {
+	arg_max = sysconf(_SC_ARG_MAX);
+	if (arg_max > 0 && l > 0.80 * arg_max) {
 		fprintf(stderr, "%s: WARNING!!\n"
 "   Scripts of length near to (or higher than) the current System limit on\n"
 "   \"maximum size of arguments to EXEC\", could comprise its binary execution.\n"
-"   In the current System the call sysconf(_SC_ARG_MAX) returns %d bytes\n"
+"   In the current System the call sysconf(_SC_ARG_MAX) returns %ld bytes\n"
 "   and your script \"%s\" is %d bytes length.\n",
-		my_name, cnt, file, l);
+		my_name, arg_max, file, l);
 	}
 	return text;
 }
