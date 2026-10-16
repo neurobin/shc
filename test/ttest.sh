@@ -1,7 +1,7 @@
 #!/bin/bash
 
-shells=('/bin/sh' '/bin/dash' '/bin/bash' '/bin/ash' '/bin/ksh' '/bin/zsh' '/usr/bin/tcsh' '/bin/csh' '/usr/bin/rc')
-## Install: sudo apt install dash bash ash ksh zsh tcsh csh rc
+shells=('/bin/sh' '/bin/dash' '/bin/bash' '/bin/ksh' '/bin/zsh' '/usr/bin/tcsh' '/bin/csh' '/usr/bin/rc')
+## Install: sudo apt install dash bash ksh zsh tcsh csh rc
 
 check_opts=('' '-r' '-v' '-D' '-S')
 

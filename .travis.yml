@@ -3,7 +3,7 @@ sudo: required
 language: c
 before_install:
   - sudo apt-get update -q
-  - sudo apt install dash bash ash ksh zsh tcsh csh rc
+  - sudo apt install dash bash ksh zsh tcsh csh rc
 script: 
   - ./autogen.sh
   - ./configure

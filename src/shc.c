@@ -1002,7 +1002,6 @@ struct {
 	{ "Rsh",  "-c", "",   "exec '%s' \"$@\"" }, /* AIX_nvi */
 	{ "ksh",  "-c", "",   "exec '%s' \"$@\"" }, /* OK on Solaris, AIX and Linux (THX <bryan.hogan@dstintl.com>) */
 	{ "tsh",  "-c", "--", "exec '%s' \"$@\"" }, /* AIX */
-	{ "ash",  "-c", "--", "exec '%s' \"$@\"" }, /* Linux */
 	{ "csh",  "-c", "-b", "exec '%s' $argv" }, /* AIX: No file for $0 */
 	{ "tcsh", "-c", "-b", "exec '%s' $argv" },
 	{ NULL,   NULL, NULL, NULL },
