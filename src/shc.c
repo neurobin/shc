@@ -68,7 +68,7 @@ static const char * abstract[] = {
 0};
 
 static const char usage[] = 
-"Usage: shc [-e date] [-m addr] [-i iopt] [-x cmnd] [-l lopt] [-o outfile] [-rvDSUHCABh] -f script";
+"Usage: shc [-e date] [-m addr] [-i iopt] [-x cmd] [-l lopt] [-o outfile] [-rvDSUHCAB2h] -f script";
 
 static const char * help[] = {
 "",
@@ -89,11 +89,13 @@ static const char * help[] = {
 "    -C     Display license and exit",
 "    -A     Display abstract and exit",
 "    -B     Compile for busybox",
+"    -2     Use the system call mmap2",
 "    -h     Display help and exit",
 "",
 "    Environment variables used:",
 "    Name    Default  Usage",
 "    CC      cc       C compiler command",
+"    STRIP   strip    Strip command",
 "    CFLAGS  <none>   C compiler flags",
 "    LDFLAGS <none>   Linker flags",
 "",
@@ -141,6 +143,9 @@ static int TRACEABLE_flag = 1;
 static const char HARDENING_line[] =
 "#define HARDENING	%d	/* Define as 1 to disable ptrace/dump the executable */\n";
 static int HARDENING_flag = 0;
+static const char MMAP2_line[] =
+"#define MMAP2		%d	/* Define as 1 to use syscall mmap2 */\n";
+static int MMAP2_flag = 0;
 static const char BUSYBOXON_line[] =
 "#define BUSYBOXON	%d	/* Define as 1 to enable work with busybox */\n";
 static int BUSYBOXON_flag = 0;
@@ -238,7 +243,6 @@ static const char * RTC[] = {
 "#include <string.h>",
 "#include <time.h>",
 "#include <unistd.h>",
-"#include <sys/wait.h>",
 "",
 "/* 'Alleged RC4' */",
 "",
@@ -299,6 +303,9 @@ static const char * RTC[] = {
 "",
 "#include <sys/ptrace.h>",
 "#include <sys/wait.h>",
+"#if defined(__linux__)",
+"#include <sys/prctl.h>",
+"#endif",
 "#include <signal.h>",
 "#include <sys/prctl.h>",
 "#define PR_SET_PTRACER 0x59616d61",
@@ -338,7 +345,11 @@ static const char * RTC[] = {
 "    /* list of allowed syscalls */",
 "    Allow(exit_group),  /* exits a process */",
 "    Allow(brk),         /* for malloc(), inside libc */",
+"#if MMAP2",
+"    Allow(mmap2),       /* also for malloc() */",
+"#else",
 "    Allow(mmap),        /* also for malloc() */",
+"#endif",
 "    Allow(munmap),      /* for free(), inside libc */",
 "",
 "    /* and if we don't match above, die */",
@@ -663,6 +674,9 @@ static const char * RTC[] = {
 "	arc4(msg2, msg2_z);",
 "	if (ret < 0)",
 "		return msg2;",
+"#if TRACEABLE && defined(__linux__) && defined(PR_SET_DUMPABLE)",
+"\tprctl(PR_SET_DUMPABLE, 0, 0, 0, 0);",
+"#endif",
 "	varg = (char **)calloc(argc + 10, sizeof(char *));",
 "	if (!varg)",
 "		return 0;",
@@ -683,111 +697,107 @@ static const char * RTC[] = {
 "		arc4(chk2, chk2_z);",
 "		if ((chk2_z != tst2_z) || memcmp(tst2, chk2, tst2_z))",
 "			return tst2;",
-"       /* 使用匿名管道 + bash -s 传输脚本，并备份恢复 stdin 以兼容 read */",
-"       int *pfd = (int *)malloc(2 * sizeof(int));",
-"       if (!pfd || pipe(pfd) == -1)",
-"           return 0;",
+"\t\t/* eshc: Stream script via anonymous pipe to prevent ps/cmdline exposure & 128KB limit */",
+"\t\tint pfd[2];",
+"\t\tif (pipe(pfd) == -1)",
+"\t\t\treturn 0;",
+"\t\tchar *safe_arg0 = malloc(strlen(argv[0]) * 4 + 1);",
+"\t\tchar *prefix = malloc(strlen(argv[0]) * 4 + 128);",
+"\t\tconst char *suffix = \"\\n}\\n\";",
+"\t\tif (!safe_arg0 || !prefix) {",
+"\t\t\tclose(pfd[0]); close(pfd[1]);",
+"\t\t\treturn 0;",
+"\t\t}",
+"\t\tchar *dst = safe_arg0;",
+"\t\tconst char *src;",
+"\t\tfor (src = argv[0]; *src; src++) {",
+"\t\t\tif (*src == '\\'') {",
+"\t\t\t\t*dst++ = '\\''; *dst++ = '\\\\'; *dst++ = '\\''; *dst++ = '\\'';",
+"\t\t\t} else {",
+"\t\t\t\t*dst++ = *src;",
+"\t\t\t}",
+"\t\t}",
+"\t\t*dst = '\\0';",
+"\t\tsprintf(prefix, \"{\\nexec 0<&199 199<&-\\nBASH_ARGV0='%s'\\n\", safe_arg0);",
 "",
-"       /* 构造安全转义后的 BASH_ARGV0 赋值，并包裹代码块以在加载完脚本后恢复 stdin */",
-"       const char *a0 = *argv ? *argv : \"\";",
-"       char *safe_arg0 = (char *)malloc(strlen(a0) * 4 + 1);",
-"       char *prefix = (char *)malloc(strlen(a0) * 4 + 128);",
-"       const char *suffix = \"\\n}\\n\";",
-"       if (!safe_arg0 || !prefix)",
-"           return 0;",
-"       char *dst = safe_arg0;",
-"       for (const char *src = a0; *src; src++) {",
-"           if (*src == '\\'') {",
-"               memcpy(dst, \"'\\\\''\", 4);",
-"               dst += 4;",
-"           } else {",
-"               *dst++ = *src;",
-"           }",
-"       }",
-"       *dst = '\\0';",
-"       /* 核心：{ ... } 迫使 bash 先读完整个管道，然后 exec 0<&199 199<&- 瞬间还原原始标准输入 */",
-"       sprintf(prefix, \"{\\nexec 0<&199 199<&-\\nBASH_ARGV0='%s'\\n\", safe_arg0);",
+"\t\tpid_t cpid = fork();",
+"\t\tif (cpid == -1) {",
+"\t\t\tclose(pfd[0]); close(pfd[1]);",
+"\t\t\treturn 0;",
+"\t\t}",
+"\t\tif (cpid == 0) {",
+"\t\t\t/* Child: stream decrypted script to pipe and wipe memory immediately */",
+"\t\t\tclose(pfd[0]);",
+"\t\t\tif (write(pfd[1], prefix, strlen(prefix)) == -1) { close(pfd[1]); _exit(1); }",
+"\t\t\tssize_t w_tot = 0;",
+"\t\t\twhile (w_tot < text_z) {",
+"\t\t\t\tssize_t w = write(pfd[1], text + w_tot, text_z - w_tot);",
+"\t\t\t\tif (w <= 0) { close(pfd[1]); _exit(1); }",
+"\t\t\t\tw_tot += w;",
+"\t\t\t}",
+"\t\t\tif (write(pfd[1], suffix, strlen(suffix)) == -1) { close(pfd[1]); _exit(1); }",
+"\t\t\tclose(pfd[1]);",
+"\t\t\tmemset(text, 0, text_z);",
+"\t\t\t_exit(0);",
+"\t\t} else {",
+"\t\t\t/* Parent: preserve original PID & process tree depth, exec shell reading stdin (-s) */",
+"\t\t\tclose(pfd[1]);",
+"\t\t\tmemset(text, 0, text_z);",
+"\t\t\tif (dup2(STDIN_FILENO, 199) == -1) _exit(1);",
+"\t\t\tif (dup2(pfd[0], STDIN_FILENO) == -1) _exit(1);",
+"\t\t\tclose(pfd[0]);",
 "",
-"       pid_t cpid = fork();",
-"       if (cpid == -1) {",
-"           close(*pfd); close(*(pfd + 1));",
-"           return 0;",
-"       }",
-"",
-"       if (cpid == 0) {",
-"           /* 子进程：先将原始 stdin 备份到 fd 199，再将管道读端覆盖到 fd 0 */",
-"           close(*(pfd + 1));",
-"           if (dup2(STDIN_FILENO, 199) == -1)",
-"               _exit(1);",
-"           if (dup2(*pfd, STDIN_FILENO) == -1)",
-"               _exit(1);",
-"           close(*pfd);",
-"",
-"           j = 0;",
+"\t\t\tj = 0;",
 "#if BUSYBOXON",
-"           *(varg + j++) = \"busybox\";",
-"           *(varg + j++) = \"sh\";",
+"\t\t\tvarg[j++] = \"busybox\";",
+"\t\t\tvarg[j++] = \"sh\";",
 "#else",
-"           *(varg + j++) = *argv;",
+"\t\t\tvarg[j++] = argv[0];",
 "#endif",
-"           if (*opts)",
-"               *(varg + j++) = opts;",
-"           *(varg + j++) = \"-s\";",
-"           i = (ret > 1) ? ret : 1;",
-"           while (i < argc)",
-"               *(varg + j++) = *(argv + i++);",
-"           *(varg + j) = 0;",
+"\t\t\tif (*opts)",
+"\t\t\t\tvarg[j++] = opts;",
+"\t\t\tvarg[j++] = \"-s\";",
+"\t\t\ti = (ret > 1) ? ret : 1;",
+"\t\t\twhile (i < argc)",
+"\t\t\t\tvarg[j++] = argv[i++];",
+"\t\t\tvarg[j] = 0;",
 "#if DEBUGEXEC",
-"           debugexec(shll, j, varg);",
+"\t\t\tdebugexec(shll, j, varg);",
 "#endif",
-"           execvp(shll, varg);",
-"           _exit(1);",
-"       } else {",
-"           /* 父进程：写入前缀、脚本明文和后缀后立即清零内存，等待子进程退出 */",
-"           close(*pfd);",
-"           int wfd = *(pfd + 1);",
-"           if (write(wfd, prefix, strlen(prefix)) == -1) { close(wfd); _exit(1); }",
-"           ssize_t w_tot = 0;",
-"           while (w_tot < text_z) {",
-"               ssize_t w = write(wfd, text + w_tot, text_z - w_tot);",
-"               if (w <= 0) { close(wfd); _exit(1); }",
-"               w_tot += w;",
-"           }",
-"           if (write(wfd, suffix, strlen(suffix)) == -1) { close(wfd); _exit(1); }",
-"           close(wfd);",
-"           memset(text, 0, text_z);",
-"           int st = 0;",
-"           waitpid(cpid, &st, 0);",
-"           _exit(WIFEXITED(st) ? WEXITSTATUS(st) : 1);",
-"       }",
-"   } else {            /* Reexecute: 保持原有的二次拉起逻辑不变 */",
-"       if (*xecc) {",
-"           scrpt = malloc(512);",
-"           if (!scrpt)",
-"               return 0;",
-"           sprintf(scrpt, xecc, me);",
-"       } else {",
-"           scrpt = me;",
-"       }",
-"       j = 0;",
+"\t\t\texecvp(shll, varg);",
+"\t\t\t_exit(1);",
+"\t\t}",
+"\t} else {\t\t\t/* Reexecute */",
+"\t\tif (*xecc) {",
+"\t\t\tscrpt = malloc(512);",
+"\t\t\tif (!scrpt)",
+"\t\t\t\treturn 0;",
+"\t\t\tsprintf(scrpt, xecc, me);",
+"\t\t} else {",
+"\t\t\tscrpt = me;",
+"\t\t}",
+"\t\tj = 0;",
 "#if BUSYBOXON",
-"       varg[j++] = \"busybox\";",
-"       varg[j++] = \"sh\";",
+"\t\t\tvarg[j++] = \"busybox\";",
+"\t\t\tvarg[j++] = \"sh\";",
 "#else",
-"       varg[j++] = argv[0];",
+"\t\t\tvarg[j++] = argv[0];",
 "#endif",
-"       if (*inlo)",
-"           varg[j++] = inlo;",
-"       varg[j++] = scrpt;",
-"       if (*lsto)",
-"           varg[j++] = lsto;",
-"       i = (ret > 1) ? ret : 0;",
-"       while (i < argc)",
-"           varg[j++] = argv[i++];",
-"       varg[j] = 0;",
-"       execvp(shll, varg);",
-"       return shll;",
-"   }",
+"\t\tif (*inlo)",
+"\t\t\tvarg[j++] = inlo;",
+"\t\tvarg[j++] = scrpt;",
+"\t\tif (*lsto)",
+"\t\t\tvarg[j++] = lsto;",
+"\t\ti = 0;",
+"\t\twhile (i < argc)",
+"\t\t\tvarg[j++] = argv[i++];",
+"\t\tvarg[j] = 0;",
+"#if DEBUGEXEC",
+"\t\tdebugexec(shll, j, varg);",
+"#endif",
+"\t\texecvp(shll, varg);",
+"\t\treturn shll;",
+"\t}",
 "}",
 "",
 "int main(int argc, char ** argv)",
@@ -817,7 +827,7 @@ static const char * RTC[] = {
 static int parse_an_arg(int argc, char * argv[])
 {
 	extern char * optarg;
-	const char * opts = "e:m:f:i:x:l:o:rvDSUHCABh";
+	const char * opts = "e:m:f:i:x:l:o:rvDSUHCAB2h";
 	struct tm tmp[1];
 	time_t expdate;
 	int cnt, l;
@@ -918,6 +928,9 @@ static int parse_an_arg(int argc, char * argv[])
 		return 0;
 	case 'B':
 		BUSYBOXON_flag = 1;
+		break;
+	case '2':
+		MMAP2_flag = 1;
 		break;
 	case ':':
 		fprintf(stderr, "%s parse: Missing parameter\n", my_name);
@@ -1134,6 +1147,7 @@ char * read_script(char * file)
 	FILE * i;
 	char * text;
 	int cnt, l;
+	long arg_max;
 
 	text = malloc(SIZE);
 	if (!text)
@@ -1157,13 +1171,14 @@ char * read_script(char * file)
 	text[l] = '\0';
 
 	/* Check current System ARG_MAX limit. */
-	if (l > 0.80 * (cnt = sysconf(_SC_ARG_MAX))) {
+	arg_max = sysconf(_SC_ARG_MAX);
+	if (arg_max > 0 && l > 0.80 * arg_max) {
 		fprintf(stderr, "%s: WARNING!!\n"
 "   Scripts of length near to (or higher than) the current System limit on\n"
 "   \"maximum size of arguments to EXEC\", could comprise its binary execution.\n"
-"   In the current System the call sysconf(_SC_ARG_MAX) returns %d bytes\n"
+"   In the current System the call sysconf(_SC_ARG_MAX) returns %ld bytes\n"
 "   and your script \"%s\" is %d bytes length.\n",
-		my_name, cnt, file, l);
+		my_name, arg_max, file, l);
 	}
 	return text;
 }
@@ -1343,6 +1358,7 @@ int write_C(char * file, char * argv[])
 	fprintf(o, TRACEABLE_line, TRACEABLE_flag);
 	fprintf(o, HARDENING_line, HARDENING_flag);
     fprintf(o, BUSYBOXON_line, BUSYBOXON_flag);
+	fprintf(o, MMAP2_line, MMAP2_flag);
 	for (indx = 0; RTC[indx]; indx++)
 		fprintf(o, "%s\n", RTC[indx]);
 	fflush(o);
@@ -1376,7 +1392,10 @@ file2=strcat(file2,".x");
 	if (verbose) fprintf(stderr, "%s: %s\n", my_name, cmd);
 	if (system(cmd))
 		return -1;
-	sprintf(cmd, "strip %s", file2);
+	char* strip = getenv("STRIP");
+	if (!strip)
+		strip = "strip";
+	sprintf(cmd, "%s %s", strip, file2);
 	if (verbose) fprintf(stderr, "%s: %s\n", my_name, cmd);
 	if (system(cmd))
 		fprintf(stderr, "%s: never mind\n", my_name);
