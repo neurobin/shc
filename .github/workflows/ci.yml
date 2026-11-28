@@ -1,0 +1,46 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: sudo apt-get update -q && sudo apt install -y dash bash ksh zsh tcsh csh rc
+
+    - name: Build and Test (with sanitize)
+      run: |
+        SANITIZE="${SANITIZE} -fsanitize=address"
+        #SANITIZE="${SANITIZE} -fsanitize=thread"
+        SANITIZE="${SANITIZE} -fsanitize=leak"
+        SANITIZE="${SANITIZE} -fsanitize=undefined"
+        SANITIZE="${SANITIZE} -fsanitize=integer-divide-by-zero"
+        #      SANITIZE="${SANITIZE} -fsanitize=vla-bound"
+        SANITIZE="${SANITIZE} -fsanitize=null"
+        SANITIZE="${SANITIZE} -fsanitize=signed-integer-overflow"
+        SANITIZE="${SANITIZE} -fsanitize=bounds"
+        #SANITIZE="${SANITIZE}  -fsanitize=bounds-strict"
+        SANITIZE="${SANITIZE} -fsanitize=bool"
+        SANITIZE="${SANITIZE} -fsanitize=enum"
+        #SANITIZE="${SANITIZE} -fsanitize-recover"  # will try to continue running the program
+        #SANITIZE_LINK="-static-libasan -static -lasan -static -lubsan -ldl -lm"
+        SANITIZE_LINK="-l:libasan.a -l:libubsan.a -ldl -lm"
+        SANITIZE="${SANITIZE} -fno-sanitize=alignment"
+        ./autogen.sh
+        ./configure
+        make clean
+        make CFLAGS="${SANITIZE} -g -O2" LDFLAGS="${SANITIZE_LINK}"
+        make CC=gcc CFLAGS="${SANITIZE} -g -O2" LDFLAGS="${SANITIZE_LINK}" test
+
+    - name: Build and Test (Normal)
+      run: |
+        ./autogen.sh
+        ./configure
+        make clean
+        make
+        make test

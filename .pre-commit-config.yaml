@@ -1,0 +1,91 @@
+---
+exclude:
+  (?x)^(
+  configure\..*|
+  .cache/.*
+  )$
+repos:
+  - repo: https://github.com/executablebooks/mdformat
+    # Do this before other tools "fixing" the line endings
+    rev: 0.7.17
+    hooks:
+      - id: mdformat
+        name: Format Markdown
+        stages: [manual]
+        entry: mdformat  # Executable to run, with fixed options
+        language: python
+        types: [markdown]
+        args: [--wrap, '75', --number]
+        additional_dependencies:
+          - mdformat-toc
+          - mdformat-gfm
+          - mdformat-beautysh
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      # - id: no-commit-to-branch
+      #  args: [--branch, main]
+      - id: debug-statements
+      - id: end-of-file-fixer
+        exclude: ^(test/.*)$
+      - id: trailing-whitespace
+        exclude: .*\.md$
+      - id: check-json
+      - id: mixed-line-ending
+      - id: check-builtin-literals
+        args: [--ignore=dict]
+      - id: check-ast
+      - id: check-merge-conflict
+      - id: check-executables-have-shebangs
+      - id: check-shebang-scripts-are-executable
+        exclude: ^(test/.*)$
+      - id: check-docstring-first
+      - id: fix-byte-order-marker
+      - id: check-case-conflict
+      - id: check-toml
+  - repo: https://github.com/lovesegfault/beautysh.git
+    rev: v6.2.1
+    hooks:
+      - id: beautysh
+        exclude: ^(test/.*)$
+        additional_dependencies:
+          - setuptools
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.3.0
+    hooks:
+      - id: codespell
+        args:
+          - --toml
+          - pyproject.toml
+        additional_dependencies:
+          - tomli
+  - repo: https://github.com/pocc/pre-commit-hooks
+    rev: v1.3.5
+    # Install dependencies on windows:
+    #  choco install llvm uncrustify cppcheck
+    hooks:
+      - id: uncrustify
+        stages: [manual]
+        args: [--replace, --no-backup, -c, uncrustify.cfg]
+      - id: cppcheck
+        args:
+          - --force
+          #- --std=c99
+          - --language=c
+          #- -IInc
+          - '--template={file}({line}): {severity} ({id}): {message}'
+      - id: cpplint
+        args: ["--filter=-build/header_guard,-build/include,-build/include_subdir,-legal/copyright,-readbility/casting,-readability/fn_size,-whitespace/blank_line,-whitespace/braces,-whitespace/comma,-whitespace/comments,-whitespace/line_length,-whitespace/newline,-whitespace/operators,-whitespace/parens,-whitespace/semicolon,-whitespace/tab,-whitespace/todo"]
+        additional_dependencies:
+          - cpplint>=1.6.1
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.10.0.1
+    hooks:
+      - id: shellcheck
+        # args: [-x,-e1007,-e1009,-e1072,-e1073]
+  - repo: https://github.com/pocc/pre-commit-hooks
+    rev: v1.3.5
+    hooks:
+      - id: clang-format
+        stages: [manual]
+        args: [-i]

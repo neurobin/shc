@@ -1,0 +1,39 @@
+---
+name: Generate files (documentation, autotools)
+on:
+  push:
+    paths: [man.md, aclocal.m4, configure.ac]
+  workflow_dispatch:
+jobs:
+  convert_via_pandoc:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            man:
+              - 'man.md'
+            autotools:
+              - 'aclocal.m4'
+              - 'configure.ac'
+      - uses: docker://pandoc/core:2.17
+        if: ${{ github.event_name == 'workflow_dispath' || steps.changes.outputs.man == 'true' }}
+        with:
+          args: -s man.md -t man -o shc.1
+      - uses: docker://pandoc/core:2.17
+        if: ${{ github.event_name == 'workflow_dispath' || steps.changes.outputs.man == 'true' }}
+        with:
+          args: -s man.md -t html -o man.html
+      - run: |-
+          ./autogen.sh
+        if: ${{ github.event_name == 'workflow_dispath' || steps.changes.outputs.autotools == 'true' }}
+      - name: Commit changes
+        if: ${{ github.event_name == 'workflow_dispath' || steps.changes.outputs.man == 'true' || steps.changes.outputs.autotools }}
+        run: |-
+          for r in $(git remote) ; do git remote get-url --all $r ; done
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git commit -a -m "ci: Github Action Generate Files"
+          git push
