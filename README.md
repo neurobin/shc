@@ -7,7 +7,7 @@
 
 A generic shell script compiler. Shc takes a script, which is specified on the command line and produces C source code. The generated source code is then compiled and linked to produce a stripped binary executable.
 
-The compiled binary will still be dependent on the shell specified in the first line of the shell code (i.e shebang) (i.e. #!/bin/sh), thus shc does not create completely independent binaries.
+The compiled binary will still be dependent on the shell specified in the first line of the shell code (i.e shebang) (i.e. `#!/bin/sh`), thus shc does not create completely independent binaries.
 
 shc itself is not a compiler such as cc, it rather encodes and encrypts a shell script and generates C source code with the added expiration capability. It then uses the system compiler to compile a stripped binary which behaves exactly like the original script. Upon execution, the compiled binary will decrypt and execute the code with the shell -c option.
 
@@ -23,7 +23,7 @@ sudo make install
 
 ### Ubuntu-specific
 
-```
+```bash
 sudo add-apt-repository ppa:neurobin/ppa
 sudo apt-get update
 sudo apt-get install shc
@@ -33,7 +33,7 @@ If the above installation method seems like too much work, then just download a 
 
 ## Usage
 
-```
+```bash
 shc [options]
 shc -f script.sh -o binary
 shc -U -f script.sh -o binary # Untraceable binary (prevent strace, ptrace etc..)
@@ -56,15 +56,15 @@ make check
 
 ## Known limitations
 
-The one (and I hope the only) limitation using shc is the _SC_ARG_MAX system configuration parameter.
+The one (and I hope the only) limitation using shc is the `_SC_ARG_MAX` system configuration parameter.
 It limits the maximum length of the arguments to the exec function, limiting the maximum length of the runnable script of shc.
 
 !! - CHECK YOUR RESULTS CAREFULLY BEFORE USING - !!
 
 ## Links
 
-1. [Man Page](http://neurobin.github.io/shc/man.html)
-2. [Web Page](http://neurobin.github.io/shc)
+1. [Man Page](https://neurobin.github.io/shc/man.html)
+2. [Web Page](https://neurobin.github.io/shc)
 
 # Contributing
 
