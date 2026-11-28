@@ -1320,7 +1320,7 @@ strcpy(file2,file);
 file2=strcat(file2,".x");
 
 }
-	sprintf(cmd, "%s %s %s %s.x.c -o %s", cc, cflags, ldflags, file, file2);
+	sprintf(cmd, "%s %s %s \'%s.x.c\' -o %s", cc, cflags, ldflags, file, file2);
 	if (verbose) fprintf(stderr, "%s: %s\n", my_name, cmd);
 	if (system(cmd))
 		return -1;
