@@ -71,7 +71,7 @@ You can use it if you wish to distribute your scripts but don't want them to be 
 : Make binary to be untraceable (using *strace*, *ptrace*, *truss*, etc.) 
 
 -H
-: Hardening. Extra security flag without root access requirement that protects against dumping, code injection, `cat /proc/pid/cmdline`, ptrace, etc.. This feature is **experimental** and may not work on all systems. it require bourne shell (sh) scripts
+: Hardening. Extra security flag without root access requirement that protects against dumping, code injection, `cat /proc/pid/cmdline`, ptrace, etc.. This feature is **experimental** and may not work on all systems. it requires bourne shell (sh) scripts
 
 -C
 : Display license and exit 

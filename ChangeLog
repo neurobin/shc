@@ -122,8 +122,8 @@ CHANGES
 	- Fixed bug: "rlax" used after encryption.
 
 	Thanks to Nalneesh Gaur <Nalneesh.Gaur@accenture.com> for:
-	- Read permision of the script.x exposes it to disassembling.
-	- Group and others read permision is now removed by default.
+	- Read permission of the script.x exposes it to disassembling.
+	- Group and others read permission is now removed by default.
 
 
 
@@ -227,15 +227,15 @@ SCO, both not used now.
 3.0b1	Wed Feb 26 14:27:22 WET 1997
 
 	The main difference with 2.4 is that in it the script was
-compressed an then shuffle around, now int 3.0 the script is encripted
-with an inline code, so not needend any external comand to work, and been
-faster at startup. Other related adventage is that the only information
-not encripted in .x.c is an stamp, expiration date and provider email
+compressed an then shuffle around, now int 3.0 the script is encrypted
+with an inline code, so not needend any external command to work, and been
+faster at startup. Other related advantage is that the only information
+not encrypted in .x.c is an stamp, expiration date and provider email
 address.
 
-	Something equivalent to cheksums have been used to enforced at
+	Something equivalent to checksums has been used to enforce at
 execution that the executing shell has not been modified from the time
-the script was compiled. If anybody tries to change the excuting shell,
+the script was compiled. If anybody tries to change the executing shell,
 .x will refuse to execute.
 
 	The generated .x.c source code is now readable.
